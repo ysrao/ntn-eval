@@ -32,6 +32,12 @@ p{margin:0}
 .film video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#000;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);cursor:pointer}
 .film figcaption{font-size:14px;color:var(--muted);margin-top:9px}
 .film-toggle{position:absolute;top:50%;left:50%;width:76px;height:76px;padding:0;border-radius:50%;border:1.5px solid rgba(255,255,255,.9);background:rgba(10,18,24,.62);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(0,0,0,.35);opacity:0;pointer-events:none;transform:translate(-50%,-50%) scale(.94);transition:opacity .3s ease,transform .3s ease}
+.film-cta{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:12px;pointer-events:none;z-index:3;transition:opacity .3s ease,visibility .3s ease}
+.film-cta .cta-circle{width:84px;height:84px;border-radius:50%;border:1.5px solid rgba(255,255,255,.9);background:rgba(10,18,24,.62);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(0,0,0,.35)}
+.film-cta .cta-circle svg{width:38px;height:38px;fill:#fff;margin-left:5px}
+.film-cta .cta-text{font-size:16px;font-weight:600;color:#fff;background:rgba(10,18,24,.66);padding:7px 16px;border-radius:999px;letter-spacing:.02em;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.film-stage[data-state="playing"] .film-cta{opacity:0;visibility:hidden}
+.film-stage.has-played[data-state="paused"] .film-cta{opacity:0;visibility:hidden}
 .film-stage.show-controls .film-toggle{opacity:1;transform:translate(-50%,-50%) scale(1)}
 .film-toggle svg{width:30px;height:30px;fill:currentColor;display:block}
 .film-toggle .icon-pause{display:none}
@@ -141,6 +147,7 @@ footer li{margin-bottom:5px}
       Your browser cannot play this video inline.
     </video>
     <div class="film-toggle" aria-hidden="true"><svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.5v13l11-6.5z"/></svg><svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></div>
+      <div class="film-cta" aria-hidden="true"><span class="cta-circle"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.5v13l11-6.5z"/></svg></span><span class="cta-text">Tap to play the film</span></div>
     </div>
     <figcaption>The story in 100 seconds — terrestrial first, then satellite.</figcaption>
   </figure>
@@ -1407,7 +1414,7 @@ function computeAll(){
     if(hideTimer) clearTimeout(hideTimer);
   });
   stage.addEventListener('blur', function(){ stage.classList.remove('show-controls'); });
-  video.addEventListener('play', show);
+  video.addEventListener('play', function(){ stage.classList.add('has-played'); show(); });
   video.addEventListener('pause', show);
   video.addEventListener('ended', show);
   sync();
