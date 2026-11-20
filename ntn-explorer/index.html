@@ -360,6 +360,10 @@ var TERMINAL_LABELS = {
   handheld:"Handheld satellite device",
   premises:"Phone or PC on premises"
 };
+function termLabelFor(s, k){
+  if (k === "phone" && (s.id === "c5" || s.id === "wifi")) return "Standard phone";
+  return TERMINAL_LABELS[k];
+}
 var DEFAULT_TERMINALS = { starlink:"dedicated", oneweb:"dedicated", iridium:"handheld", o3b:"dedicated", geo_ideal:"dedicated", geo_insat:"dedicated", geo_palapa:"dedicated", geo_nusantara:"dedicated", geo_astra:"dedicated", geo_hotbird:"dedicated", geo_galaxy:"dedicated", geo_starone:"dedicated", geo_inmarsat:"dedicated", geo_thuraya:"handheld", c5:"phone", wifi:"premises" };
 function isGeoId(id){ return !!id && id.indexOf("geo_")===0; }
 function isGeoSys(s){ return !!s && s.kind==="geo"; }
@@ -643,7 +647,7 @@ function renderTermGrid(){
   var sel = document.createElement("select"); sel.id = "term-" + s.id;
   sel.setAttribute("aria-label", "Terminal for " + s.name);
   Object.keys(TERMINAL_LABELS).forEach(function(k){
-    var o = document.createElement("option"); o.value = k; o.textContent = TERMINAL_LABELS[k] + (DEFAULT_TERMINALS[s.id] === k ? " — default" : "");
+    var o = document.createElement("option"); o.value = k; o.textContent = termLabelFor(s, k) + (DEFAULT_TERMINALS[s.id] === k ? " — default" : "");
     sel.appendChild(o);
   });
   sel.value = state.terminals[s.id] || DEFAULT_TERMINALS[s.id];
@@ -1032,7 +1036,7 @@ function refBox(s){
       + '<p class="note">You set <strong>Terrestrial (cellular / Wi-Fi) at this location = Not available</strong>, so no throughput / latency / cost panel is shown for this system here. This is <strong>not from a database</strong> — no coverage database was consulted; change the selector in control 3 if this place does have terrestrial service.</p></div>';
   }
   var er = effectiveRef(s);
-  var termLabel = TERMINAL_LABELS[state.terminals[s.id]];
+  var termLabel = termLabelFor(s, state.terminals[s.id]);
   if (er.notOffered){
     return '<div class="refbox"><div class="label" style="margin-bottom:6px">Reference — for the terminal you selected</div>'
       + '<p class="note" style="font-weight:800;color:var(--red);font-size:14px">' + er.notOffered + '</p>'
