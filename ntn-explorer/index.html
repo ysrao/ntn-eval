@@ -111,6 +111,7 @@ td.num,th.num{text-align:right;font-family:"IBM Plex Mono",monospace;font-weight
 .term-item label{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px}
 .term-item select{min-height:40px;font-size:13.5px;padding:6px 8px}
 .fade-box{margin-top:12px;border:1.5px solid var(--amber);border-radius:12px;padding:12px;background:var(--amber-bg)}
+.ev-box{margin-top:12px;border:1.5px solid var(--line);border-radius:12px;padding:12px}
 .fade-box h4{margin:0 0 6px;font-size:14px}
 .fade-box .frow{display:flex;justify-content:space-between;gap:14px;font-size:13.5px;padding:3px 0;border-bottom:1px dashed var(--line)}
 .fade-box .frow span{color:var(--muted);font-weight:700}
@@ -132,7 +133,7 @@ footer li{margin-bottom:5px}
 
   <p class="label" style="margin-bottom:2px">Live orbit computation · Cellular · Wi-Fi · Satellite</p>
   <h1>Terrestrial to NTN Explorer <span style="font-size:16px;font-weight:700;color:var(--muted);letter-spacing:0;white-space:nowrap">· v3</span></h1>
-  <p class="lede">Pick <strong>one system at a time</strong> from the two dropdowns — <strong>Category (Cellular / WiFi / LEO / MEO / GEO)</strong> then the <strong>system in that category</strong> — so the page stays uncluttered. GEO is no longer one satellite: choose a <strong>named fleet</strong> (INSAT/GSAT, Palapa, Nusantara, Astra, Hotbird, Galaxy, Star One for Brazil, Inmarsat, Thuraya, or the ideal best-case) and the page computes elevation, azimuth and delay to its <strong>real orbital slot</strong>. Pick a <strong>place from the menu</strong> — now including <strong>Svalbard and the South Pole</strong> for the polar extreme — (or enter any latitude/longitude), a <strong>date</strong> and a <strong>minimum elevation</strong>, then press Compute. The page fetches <strong>real TLE orbital data from CelesTrak</strong> and propagates every satellite with SGP4 <strong>in your browser</strong> — passes, coverage, delay and Doppler are computed live for that place and date, because orbital data changes with date, time and location. Every assumption is a <strong>visible choice</strong> below — terminal per system, mobility, conditions, <strong>terrestrial availability</strong> and <strong>gateway / interconnection</strong>, including the <strong>data-residency rule</strong> (India's requirement that traffic enter and leave only through a gateway inside the country — control 7). Two honest limits, stated up front: <strong>cellular / Wi-Fi availability is NOT taken from any database</strong> — no coverage database or operator map is consulted; it is a selector you set (the place menu only suggests a default). And <strong>gateway routing is now modelled</strong> (see control 7): in bent-pipe mode a pass only counts as <em>service</em> while the same satellite can also see its gateway. Throughput and cost panels are labelled <strong>reference</strong> ranges.</p>
+  <p class="lede">Pick <strong>one system at a time</strong> from the two dropdowns — <strong>Category (Cellular / WiFi / LEO / MEO / GEO)</strong> then the <strong>system in that category</strong> — so the page stays uncluttered. GEO is no longer one satellite: choose a <strong>named fleet</strong> (INSAT/GSAT, Palapa, Nusantara, Astra, Hotbird, Galaxy, Star One for Brazil, Inmarsat, Thuraya, or the ideal best-case) and the page computes elevation, azimuth and delay to its <strong>real orbital slot</strong>. Pick a <strong>place from the menu</strong> — now including <strong>Svalbard and the South Pole</strong> for the polar extreme — (or enter any latitude/longitude), a <strong>date</strong> and a <strong>minimum elevation</strong>, then press Compute. The page fetches <strong>real TLE orbital data from CelesTrak</strong> and propagates every satellite with SGP4 <strong>in your browser</strong> — passes, coverage, delay and Doppler are computed live for that place and date, because orbital data changes with date, time and location. Every assumption is a <strong>visible choice</strong> below — terminal per system, mobility, conditions, <strong>terrestrial availability</strong> and <strong>gateway / interconnection</strong>, including the <strong>data-residency rule</strong> (India's requirement that traffic enter and leave only through a gateway inside the country — control 7). Two honest limits, stated up front: <strong>cellular / Wi-Fi is now taken from a measurement database</strong> — Ookla Open Data (2025 Q3): real speed tests recorded at the chosen place, printed with the number of tests behind them; where the database holds nothing, the cards say “not recorded” rather than guessing. Control 3’s selector remains as your override. And <strong>gateway routing is now modelled</strong> (see control 7): in bent-pipe mode a pass only counts as <em>service</em> while the same satellite can also see its gateway. Throughput and cost panels are labelled <strong>reference</strong> ranges.</p>
 
   <figure class="film">
     <div class="film-stage" id="filmStage" data-state="paused" role="button" tabindex="0" aria-label="Play film">
@@ -182,7 +183,7 @@ footer li{margin-bottom:5px}
           <option value="notavailable">Not available</option>
           <option value="unknown">Unknown</option>
         </select>
-        <p class="hint"><strong>How do we know? We don't — this page consults no database.</strong> There is no coverage database, operator map or measurement feed behind this selector: it is <strong>your declaration</strong> for the chosen place. The place menu only <em>suggests</em> a default (cities → Available; the Mid-Pacific remote point and South Pole → Not available; custom lat/long → Unknown) and you can override it. Set <strong>Not available</strong> and the Cellular 5G and Wi-Fi cards show as unavailable with no performance panel; set <strong>Unknown</strong> and their panels are shown but flagged “availability unverified — no database consulted”.</p>
+        <p class="hint"><strong>How do we know? From measurements.</strong> This page consults <strong>Ookla Open Data (2025 Q3)</strong> — real Speedtest results recorded near the chosen place. The Cellular and Wi-Fi cards show the measured downlink, uplink and latency with the test count behind them, and the selector above shows the database’s verdict. It stays as <strong>your override</strong>: change it and your declaration governs. Where the database holds no measurements for a place, the cards say <strong>“Not recorded”</strong> — no tests in the database there, which is not proof of no service. The figures combine <strong>all operators</strong>; per-operator measured throughput exists in no open database (an operator menu, from cell-database data, is the next layer).</p>
         <div class="label" style="margin-top:14px">4 · Minimum elevation — <span class="mono" id="minElVal">25°</span></div>
         <input type="range" id="minEl" min="5" max="40" step="1" value="25" aria-label="Minimum elevation in degrees">
         <p class="hint">Only passes above this elevation count as usable. Broadband terminals usually need 25°+; narrowband systems like Iridium are designed to work at lower elevations — try 10° and watch its coverage jump.</p>
@@ -604,7 +605,7 @@ function applyPlace(id, keepTerr){
   state.place = id;
   var p = placeById(id);
   if (p.lat !== null){ $("latInput").value = p.lat; $("lonInput").value = p.lon; }
-  if (!keepTerr) $("terrSelect").value = terrDefaultFor(p);
+  if (!keepTerr){ $("terrSelect").value = terrDefaultFor(p); terrTouched = false; syncTerrSelect(); }
   $("locSelect").value = id;
   applyResidencyDefault();
   state.results = {}; renderGwGrid(); renderCards(); updateEpochBar(null); updateFallbackStatus(); updateGeoSlotHint();
@@ -697,9 +698,9 @@ function initControls(){
   $("catSelect").addEventListener("change", function(e){ state.category=e.target.value; var list=systemsInCategory(state.category); state.systemId=list[0].id; if(state.category==="GEO") state.fallbackGeoId=state.systemId; onSystemChanged(); });
   $("systemSelect").addEventListener("change", function(e){ state.systemId=e.target.value; if(sysById(state.systemId).kind==="geo") state.fallbackGeoId=state.systemId; onSystemChanged(); });
   var fbSel=$("fallbackGeoSelect"); if(fbSel) fbSel.addEventListener("change", function(e){ state.fallbackGeoId=e.target.value; updateFallbackStatus(); updateGeoSlotHint(); renderCards(); });
-  function onCoord(){ if (state.place !== "custom"){ state.place = "custom"; $("locSelect").value = "custom"; $("terrSelect").value = "unknown"; } applyResidencyDefault(); state.results = {}; renderGwGrid(); renderCards(); updateEpochBar(null); updateFallbackStatus(); updateGeoSlotHint(); }
+  function onCoord(){ if (state.place !== "custom"){ state.place = "custom"; $("locSelect").value = "custom"; $("terrSelect").value = "unknown"; terrTouched = false; syncTerrSelect(); } applyResidencyDefault(); state.results = {}; renderGwGrid(); renderCards(); updateEpochBar(null); updateFallbackStatus(); updateGeoSlotHint(); }
   $("latInput").addEventListener("input", onCoord); $("lonInput").addEventListener("input", onCoord);
-  $("terrSelect").addEventListener("change", function(){ renderCards(); });
+  $("terrSelect").addEventListener("change", function(){ terrTouched = true; renderCards(); });
   $("dateInput").addEventListener("change", function(){ state.results = {}; updateEpochBar(null); });
   $("minEl").addEventListener("input", function(e){ $("minElVal").textContent = e.target.value + "°"; updateFallbackStatus(); updateGeoSlotHint(); renderCards(); });
   $("geoFallbackToggle").addEventListener("click", function(){ state.geoFallback = !state.geoFallback; updateFallbackStatus(); renderCards(); });
@@ -715,12 +716,101 @@ function initControls(){
 }
 
 /* ---------- cards ---------- */
+/* ---------- measured terrestrial evidence — Ookla Open Data (2025 Q3) ----------
+   Two layers beside the page: terr_mobile.bin / terr_fixed.bin — every recorded
+   ~10 km tile worldwide, packed binary, fetched lazily. Preset places carry an
+   exact record inline (the 3x3 zoom-16 tiles around the point). If the packs
+   cannot load (e.g. a downloaded single-file copy), the page falls back to the
+   declaration selector, exactly as before. */
+var TERR_PERIOD = "2025 Q3 (Jul\u2013Sep 2025)";
+var TERR_PRESETS = {"mobile":{"mountain":[364.9,30.9,26,36,7],"bengaluru":[141.9,20.0,30,1010,9],"london":[158.7,25.0,51,344,9],"sydney":[189.2,32.1,41,1203,9],"nairobi":[50.0,21.1,46,118,8],"saopaulo":[307.1,37.4,23,475,9],"fairbanks":[58.7,9.1,46,6,3],"svalbard":[308.7,160.0,109,1,1],"southpole":null,"midpacific":null},"fixed":{"mountain":[435.9,196.8,11,207,8],"bengaluru":[123.9,116.5,6,1830,9],"london":[153.3,125.6,17,2575,8],"sydney":[162.7,97.7,12,3768,9],"nairobi":[41.7,36.9,10,190,9],"saopaulo":[264.0,176.2,8,1967,9],"fairbanks":[142.1,107.0,21,68,8],"svalbard":[208.4,119.1,48,7,3],"southpole":null,"midpacific":null}};
+var terrTouched = false;
+var TERR_BIN = { mobile:null, fixed:null };
+var TERR_LOADING = { mobile:false, fixed:false };
+function terrLayer(sysId){ return sysId === "wifi" ? "fixed" : "mobile"; }
+function terrEnsure(layer){
+  if (TERR_BIN[layer] || TERR_LOADING[layer]) return;
+  TERR_LOADING[layer] = true;
+  try {
+    fetch("terr_" + layer + ".bin").then(function(r){ if (!r.ok) throw new Error("http " + r.status); return r.arrayBuffer(); }).then(function(buf){
+      var dv = new DataView(buf);
+      var magic = String.fromCharCode(dv.getUint8(0), dv.getUint8(1), dv.getUint8(2), dv.getUint8(3), dv.getUint8(4));
+      if (magic !== "TERR1") throw new Error("bad pack");
+      var zoom = dv.getUint8(5), n = dv.getUint32(6, true);
+      var idx = new Uint32Array(n), dd = new Float32Array(n), uu = new Float32Array(n), ll = new Float32Array(n), tt = new Uint32Array(n);
+      var off = 10;
+      for (var i = 0; i < n; i++){ idx[i] = dv.getUint32(off, true); dd[i] = dv.getUint16(off + 4, true) / 10; uu[i] = dv.getUint16(off + 6, true) / 10; ll[i] = dv.getUint16(off + 8, true); tt[i] = dv.getUint32(off + 10, true); off += 14; }
+      TERR_BIN[layer] = { zoom:zoom, idx:idx, d:dd, u:uu, l:ll, t:tt };
+      TERR_LOADING[layer] = false;
+      syncTerrSelect(); renderCards();
+    }).catch(function(){ TERR_LOADING[layer] = false; TERR_BIN[layer] = "failed"; renderCards(); });
+  } catch(e){ TERR_LOADING[layer] = false; TERR_BIN[layer] = "failed"; }
+}
+function terrBinLookup(bin, lat, lon){
+  var zoom = bin.zoom, n2 = Math.pow(2, zoom);
+  var clat = Math.max(-85.05112878, Math.min(85.05112878, lat));
+  var sin = Math.sin(clat * Math.PI / 180);
+  var x = Math.floor(((lon + 180) / 360) * n2);
+  var y = Math.floor((0.5 - Math.log((1 + sin) / (1 - sin)) / (4 * Math.PI)) * n2);
+  var want = (x << zoom) | y;
+  var lo = 0, hi = bin.idx.length - 1;
+  while (lo <= hi){ var mid = (lo + hi) >> 1, v = bin.idx[mid]; if (v === want) return [bin.d[mid], bin.u[mid], bin.l[mid], bin.t[mid]]; if (v < want) lo = mid + 1; else hi = mid - 1; }
+  return null;
+}
+function terrLookup(sysId){
+  var layer = terrLayer(sysId);
+  var c = currentCoords();
+  var p = placeById(state.place);
+  if (p && p.lat !== null && Math.abs(c.lat - p.lat) < 1e-9 && Math.abs(c.lon - p.lon) < 1e-9 && TERR_PRESETS[layer] && (state.place in TERR_PRESETS[layer])){
+    var pr = TERR_PRESETS[layer][state.place];
+    if (pr) return { state:"record", d:pr[0], u:pr[1], l:pr[2], t:pr[3], tiles:pr[4], scope:"preset" };
+    return { state:"none" };
+  }
+  if (Math.abs(c.lat) > 85.0511) return { state:"none" };
+  var bin = TERR_BIN[layer];
+  if (!bin){ terrEnsure(layer); return { state:"loading" }; }
+  if (bin === "failed") return { state:"unavailable" };
+  var rec = terrBinLookup(bin, c.lat, c.lon);
+  if (rec) return { state:"record", d:rec[0], u:rec[1], l:rec[2], t:rec[3], scope:"area" };
+  return { state:"none" };
+}
+function syncTerrSelect(){
+  if (terrTouched) return;
+  var a = terrLookup("c5"), b = terrLookup("wifi");
+  if (a.state === "record" || b.state === "record") $("terrSelect").value = "available";
+  else if (a.state === "none" && b.state === "none") $("terrSelect").value = "unknown";
+}
+function terrEvidenceBox(s){
+  if (s.id !== "c5" && s.id !== "wifi") return "";
+  var lk = terrLookup(s.id);
+  var kind = s.id === "wifi" ? "fixed-broadband" : "mobile";
+  var head = '<div class="ev-box"><h4>Measured at this place \u2014 Ookla Open Data, ' + TERR_PERIOD + '</h4>';
+  if (lk.state === "loading") return head + '<p class="note">Loading the measurement database\u2026</p></div>';
+  if (lk.state === "unavailable") return head + '<p class="note">The measurement pack could not be loaded in this copy of the page (it travels as a file beside the page), so the reference panel stands alone.</p></div>';
+  if (lk.state === "none") return head + '<p class="note" style="color:var(--ink)"><strong>Not recorded.</strong> Ookla\u2019s database holds no ' + kind + ' measurements for this place in ' + TERR_PERIOD + '. That means no tests are recorded here \u2014 it does <strong>not</strong> prove there is no service.</p></div>';
+  var area = lk.scope === "preset" ? ('the ~2 km around the chosen point (' + lk.tiles + ' of the 9 surrounding tiles had data)') : 'the ~10 km tile containing the chosen point';
+  var html = head
+    + '<div class="frow"><span>Downlink \u2014 measured average</span><b>' + lk.d.toFixed(1) + ' Mbps</b></div>'
+    + '<div class="frow"><span>Uplink \u2014 measured average</span><b>' + lk.u.toFixed(1) + ' Mbps</b></div>'
+    + '<div class="frow"><span>Latency \u2014 measured average</span><b>' + Math.round(lk.l) + ' ms</b></div>'
+    + '<div class="frow"><span>Tests behind these figures</span><b>' + lk.t.toLocaleString("en-US") + '</b></div>'
+    + '<p class="note" style="color:var(--ink)">Averages of real users\u2019 Speedtest results across ' + area + ', <strong>all operators combined</strong> \u2014 measured performance at this place, not a coverage map and not one operator\u2019s published figures. Source: Ookla Open Data, ' + TERR_PERIOD + ', CC BY-NC-SA 4.0.</p>'
+    + (s.id === "wifi" ? '<p class="note" style="color:var(--ink)">The fixed layer measures fixed-broadband connections; indoors those are used over Wi-Fi, so this is the Wi-Fi-class experience at this place.</p>' : '')
+    + (lk.t < 30 ? '<p class="note" style="color:var(--ink)"><strong>Thin evidence:</strong> fewer than 30 tests \u2014 treat these figures as indicative, not settled.</p>' : '')
+    + '</div>';
+  return html;
+}
 function terrAvail(sysId){
-  var t = $("terrSelect").value;
   if (sysId === "c5" || sysId === "wifi"){
-    if (t === "notavailable") return {ok:false, note:"Not available here — your declaration (no database consulted)"};
-    if (t === "unknown") return {ok:"unknown", note:"Availability unverified — no database consulted"};
-    return {ok:true, note:"Available here — your declaration (no database consulted)"};
+    if (!terrTouched){
+      var lk = terrLookup(sysId);
+      if (lk.state === "record") return {ok:true, note:"Measured at this place \u2014 Ookla Open Data " + TERR_PERIOD + " \u00b7 " + lk.t.toLocaleString("en-US") + " tests behind the measured panel below" + (lk.t < 30 ? " \u00b7 thin evidence" : "")};
+      if (lk.state === "none") return {ok:"unknown", note:"Not recorded \u2014 no measurements for this place in Ookla Open Data " + TERR_PERIOD + "; availability unverified"};
+    }
+    var t = $("terrSelect").value;
+    if (t === "notavailable") return {ok:false, note:"Not available here \u2014 your declaration (control 3 override)"};
+    if (t === "unknown") return {ok:"unknown", note:"Availability unverified \u2014 your declaration (control 3)"};
+    return {ok:true, note:"Available here \u2014 your declaration (control 3 override)"};
   }
   return {ok:true, note:""};
 }
@@ -976,7 +1066,7 @@ function renderCards(){
       + (s.band ? '<div class="terminal"><b>Band</b>' + (s.id === "starlink" && termKey === "phone" ? "S-band (direct-to-cell on a standard phone)" : s.band) + '</div>' : '')
       + ((s.kind === "tle" || s.kind === "geo") ? '<div class="terminal"><b>Gateway / interconnection — your choice in control 7' + (state.gwMode[s.id] === DEFAULT_GW_MODE[s.id] ? ' (this system\'s default)' : '') + '</b>' + (state.gwMode[s.id] === "isl" ? 'Inter-satellite links (ISL) — traffic routes across satellites to a distant gateway; service coverage = geometric coverage.' : 'Bent-pipe via gateway — ' + gwSelLabel(s.id) + '. A pass counts as service only while the same satellite also sees that gateway.') + '</div>' : '')
       + ((state.residency && (s.kind === "tle" || s.kind === "geo")) ? '<div class="terminal"><b>Data-residency rule — ON (control 7)</b>Traffic for ' + placeName() + ' must enter and leave the internet only through a gateway in ' + (userCountryName() || 'the user\u2019s country (not identified for this location)') + '. ' + (inCountryGateways(s.id).length ? 'An in-country gateway is listed for this system: ' + inCountryGateways(s.id).map(function(g){ return g.name; }).join('; ') + '.' : '<strong>No in-country gateway is listed for this system — its service reads \u201cnot established\u201d.</strong>') + (s.kind === "geo" ? ' For GEO the rule applies to the gateway / teleport, not the satellite slot; INSAT / GSAT is the in-country fleet for India.' : (state.gwMode[s.id] === "isl" ? ' ISL routing does not remove the rule — the traffic must still be landed at that in-country gateway.' : '')) + '</div>' : '')
-      + conditionsBanner(s) + rainFadeBox(s);
+      + conditionsBanner(s) + rainFadeBox(s) + terrEvidenceBox(s);
     if (s.kind === "ref"){
       live = '<p class="note">Reference panel only — cellular &amp; Wi-Fi have no passes to compute. Availability at the selected place is shown below.</p>';
     } else if (r && r.error){
