@@ -211,12 +211,12 @@ footer li{margin-bottom:5px}
           <p class="hint">Pass statistics are always computed for a fixed point. For LEO / MEO, mobility barely changes them — the satellite's motion dominates — so this choice mainly frames the use case (in-motion terminal, tracking antenna, maritime / aero / vehicle plan), and a note saying so travels with the results.</p>
         </div>
         <div>
-          <div class="label" style="margin-bottom:4px">Conditions</div>
+          <div id="condBlock"><div class="label" style="margin-bottom:4px">Conditions</div>
           <select id="conditionsSelect" aria-label="Conditions assumption">
             <option value="clear">Outdoor, clear sky</option>
             <option value="rain">Rain</option>
             <option value="indoor">Indoor</option>
-          </select>
+          </select></div>
           <div id="rainBlock"><div class="label" style="margin-bottom:4px;margin-top:10px">Rain rate R — climate regime for the computed fade</div>
           <select id="rainRateSelect" aria-label="Rain rate for computed fade">
             <option value="auto">Auto — from the place's region (recommended)</option>
@@ -605,6 +605,7 @@ function syncFieldStates(){
   setGrey("dateBlock", terr);
   setGrey("minElBlock", terr);
   setGrey("continuityBlock", terr);
+  setGrey("condBlock", terr);
   setGrey("rainBlock", terr, function(){ var rr = $("rainRateSelect"); if (rr) rr.disabled = state.conditions !== "rain"; });
   setGrey("gwSection", terr, function(){ renderGwGrid(); });
   setGrey("terrBlock", !terr);
