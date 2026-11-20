@@ -183,7 +183,7 @@ footer li{margin-bottom:5px}
           <option value="notavailable">Not available</option>
           <option value="unknown">Unknown</option>
         </select>
-        <p class="hint"><strong>How do we know? From measurements.</strong> This page consults <strong>Ookla Open Data (2025 Q3)</strong> — real Speedtest results recorded near the chosen place. The Cellular and Wi-Fi cards show the measured downlink, uplink and latency with the test count behind them, and the selector above shows the database’s verdict. It stays as <strong>your override</strong>: change it and your declaration governs. Where the database holds no measurements for a place, the cards say <strong>“Not recorded”</strong> — no tests in the database there, which is not proof of no service. The figures combine <strong>all operators</strong>; per-operator measured throughput exists in no open database (an operator menu, from cell-database data, is the next layer).</p>
+        <p class="hint"><strong>How do we know? From measurements.</strong> This page consults <strong>Ookla Open Data (2025 Q3)</strong> — real Speedtest results recorded near the chosen place. If Ookla has even one test there, the card reads <strong>“Service exists”</strong> and shows the measured downlink, uplink and latency with the test count behind them; if it has none, the card reads <strong>“No service recorded”</strong>. The selector above shows that verdict and stays as <strong>your override</strong>: change it and your declaration governs. The figures combine <strong>all operators</strong> — which operator it is does not change whether service exists.</p>
         <div class="label" style="margin-top:14px">4 · Minimum elevation — <span class="mono" id="minElVal">25°</span></div>
         <input type="range" id="minEl" min="5" max="40" step="1" value="25" aria-label="Minimum elevation in degrees">
         <p class="hint">Only passes above this elevation count as usable. Broadband terminals usually need 25°+; narrowband systems like Iridium are designed to work at lower elevations — try 10° and watch its coverage jump.</p>
@@ -778,7 +778,7 @@ function syncTerrSelect(){
   if (terrTouched) return;
   var a = terrLookup("c5"), b = terrLookup("wifi");
   if (a.state === "record" || b.state === "record") $("terrSelect").value = "available";
-  else if (a.state === "none" && b.state === "none") $("terrSelect").value = "unknown";
+  else if (a.state === "none" && b.state === "none") $("terrSelect").value = "notavailable";
 }
 function terrEvidenceBox(s){
   if (s.id !== "c5" && s.id !== "wifi") return "";
@@ -787,7 +787,7 @@ function terrEvidenceBox(s){
   var head = '<div class="ev-box"><h4>Measured at this place \u2014 Ookla Open Data, ' + TERR_PERIOD + '</h4>';
   if (lk.state === "loading") return head + '<p class="note">Loading the measurement database\u2026</p></div>';
   if (lk.state === "unavailable") return head + '<p class="note">The measurement pack could not be loaded in this copy of the page (it travels as a file beside the page), so the reference panel stands alone.</p></div>';
-  if (lk.state === "none") return head + '<p class="note" style="color:var(--ink)"><strong>Not recorded.</strong> Ookla\u2019s database holds no ' + kind + ' measurements for this place in ' + TERR_PERIOD + '. That means no tests are recorded here \u2014 it does <strong>not</strong> prove there is no service.</p></div>';
+  if (lk.state === "none") return head + '<p class="note" style="color:var(--ink)"><strong>No service recorded.</strong> Ookla\u2019s database holds no ' + kind + ' measurements for this place in ' + TERR_PERIOD + ' \u2014 so on the evidence, there is no recorded service here. (A remote place can have service nobody has measured; nothing is in the database.)</p></div>';
   var area = lk.scope === "preset" ? ('the ~2 km around the chosen point (' + lk.tiles + ' of the 9 surrounding tiles had data)') : 'the ~10 km tile containing the chosen point';
   var html = head
     + '<div class="frow"><span>Downlink \u2014 measured average</span><b>' + lk.d.toFixed(1) + ' Mbps</b></div>'
@@ -804,8 +804,8 @@ function terrAvail(sysId){
   if (sysId === "c5" || sysId === "wifi"){
     if (!terrTouched){
       var lk = terrLookup(sysId);
-      if (lk.state === "record") return {ok:true, note:"Measured at this place \u2014 Ookla Open Data " + TERR_PERIOD + " \u00b7 " + lk.t.toLocaleString("en-US") + " tests behind the measured panel below" + (lk.t < 30 ? " \u00b7 thin evidence" : "")};
-      if (lk.state === "none") return {ok:"unknown", note:"Not recorded \u2014 no measurements for this place in Ookla Open Data " + TERR_PERIOD + "; availability unverified"};
+      if (lk.state === "record") return {ok:true, note:"Service exists here \u2014 Ookla recorded " + lk.t.toLocaleString("en-US") + (lk.t === 1 ? " test" : " tests") + " at this place (" + TERR_PERIOD + "); measured panel below"};
+      if (lk.state === "none") return {ok:false, note:"No service recorded \u2014 Ookla has no measurements for this place (" + TERR_PERIOD + ")"};
     }
     var t = $("terrSelect").value;
     if (t === "notavailable") return {ok:false, note:"Not available here \u2014 your declaration (control 3 override)"};
