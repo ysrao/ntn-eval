@@ -6,6 +6,14 @@ for Massive IoT over NTN"*, comparing **semantic / task-oriented** reporting
 against raw periodic, compressed periodic, and event-triggered baselines for
 two applications: smart-agriculture irrigation decisions and flood warnings.
 
+## Terrestrial to NTN Explorer (v3)
+
+Interactive page comparing cellular, Wi-Fi, LEO, MEO and GEO service for any
+place and date — live CelesTrak TLEs propagated with SGP4 in the browser,
+ITU-R rain fade, gateway / ISL routing and the data-residency rule.
+
+Live page: https://ysrao.github.io/ntn-eval/ntn-explorer/
+
 ## Quick start
 
 ```bash
