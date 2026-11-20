@@ -646,11 +646,15 @@ function renderTermGrid(){
   var lab = document.createElement("label"); lab.textContent = s.name + " — terminal for the selected system only"; lab.setAttribute("for", "term-" + s.id);
   var sel = document.createElement("select"); sel.id = "term-" + s.id;
   sel.setAttribute("aria-label", "Terminal for " + s.name);
-  Object.keys(TERMINAL_LABELS).forEach(function(k){
+  var termKeys = Object.keys(TERMINAL_LABELS);
+  if (s.id === "wifi") termKeys = termKeys.filter(function(k){ return k === "phone" || k === "premises"; });
+  termKeys.forEach(function(k){
     var o = document.createElement("option"); o.value = k; o.textContent = termLabelFor(s, k) + (DEFAULT_TERMINALS[s.id] === k ? " — default" : "");
     sel.appendChild(o);
   });
-  sel.value = state.terminals[s.id] || DEFAULT_TERMINALS[s.id];
+  var curTerm = state.terminals[s.id] || DEFAULT_TERMINALS[s.id];
+  if (termKeys.indexOf(curTerm) < 0) curTerm = DEFAULT_TERMINALS[s.id];
+  sel.value = curTerm;
   sel.addEventListener("change", function(){ state.terminals[s.id] = sel.value; renderCards(); });
   item.appendChild(lab); item.appendChild(sel); grid.appendChild(item);
   var note=document.createElement("p"); note.className="hint"; note.textContent="Only the selected system is shown — change Category / System above to set another system's terminal."; grid.appendChild(note);
