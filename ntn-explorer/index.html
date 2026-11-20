@@ -255,7 +255,7 @@ footer li{margin-bottom:5px}
     <div class="cards" id="cards"></div>
   </section>
 
-  <section class="panel" aria-label="Validation anchors">
+  <section class="panel" id="anchorSection" aria-label="Validation anchors">
     <h2>Validation anchors — does the live engine agree with our Python engine?</h2>
     <p class="sub">Our Python engine (Skyfield/SGP4) computed these from CelesTrak TLEs dated 18–19 Nov 2026, for <strong>19 Nov 2026 at 25° minimum elevation</strong>. Set the same place, date and elevation above, compute, and compare — the live card shows an anchor check when the settings match. Small differences are expected (TLE updates, sampling); large ones would be a bug.</p>
     <div class="table-scroll"><table class="stack-table">
@@ -609,6 +609,7 @@ function syncFieldStates(){
   setGrey("rainBlock", terr, function(){ var rr = $("rainRateSelect"); if (rr) rr.disabled = state.conditions !== "rain"; });
   setGrey("gwSection", terr, function(){ renderGwGrid(); });
   setGrey("terrBlock", !terr);
+  var as = $("anchorSection"); if (as) as.style.display = terr ? "none" : "";
 }
 function renderLocMenu(){
   var sel = $("locSelect"); sel.innerHTML = "";
