@@ -723,7 +723,7 @@ function initControls(){
    cannot load (e.g. a downloaded single-file copy), the page falls back to the
    declaration selector, exactly as before. */
 var TERR_PERIOD = "2025 Q3 (Jul\u2013Sep 2025)";
-var TERR_PRESETS = {"mobile":{"mountain":[364.9,30.9,26,36,7],"bengaluru":[141.9,20.0,30,1010,9],"london":[158.7,25.0,51,344,9],"sydney":[189.2,32.1,41,1203,9],"nairobi":[50.0,21.1,46,118,8],"saopaulo":[307.1,37.4,23,475,9],"fairbanks":[58.7,9.1,46,6,3],"svalbard":[308.7,160.0,109,1,1],"southpole":null,"midpacific":null},"fixed":{"mountain":[435.9,196.8,11,207,8],"bengaluru":[123.9,116.5,6,1830,9],"london":[153.3,125.6,17,2575,8],"sydney":[162.7,97.7,12,3768,9],"nairobi":[41.7,36.9,10,190,9],"saopaulo":[264.0,176.2,8,1967,9],"fairbanks":[142.1,107.0,21,68,8],"svalbard":[208.4,119.1,48,7,3],"southpole":null,"midpacific":null}};
+var TERR_PRESETS = {"mobile":{"mountain":[19.1,2.1,45,36,7],"bengaluru":[75.4,9.9,48,1010,9],"london":[27.3,16.0,96,344,9],"sydney":[145.4,23.7,60,1203,9],"nairobi":[16.4,4.9,148,118,8],"saopaulo":[212.8,26.3,49,475,9],"fairbanks":[50.4,0.4,57,6,3],"svalbard":[308.7,160.0,109,1,1],"southpole":null,"midpacific":null},"fixed":{"mountain":[42.6,17.7,23,207,8],"bengaluru":[80.3,80.8,14,1830,9],"london":[124.4,99.2,53,2575,8],"sydney":[99.4,36.3,37,3768,9],"nairobi":[9.6,12.5,30,190,9],"saopaulo":[194.1,131.5,19,1967,9],"fairbanks":[25.8,10.8,119,68,8],"svalbard":[157.4,55.0,64,7,3],"southpole":null,"midpacific":null}};
 var terrTouched = false;
 var TERR_BIN = { mobile:null, fixed:null };
 var TERR_LOADING = { mobile:false, fixed:false };
@@ -750,12 +750,22 @@ function terrBinLookup(bin, lat, lon){
   var zoom = bin.zoom, n2 = Math.pow(2, zoom);
   var clat = Math.max(-85.05112878, Math.min(85.05112878, lat));
   var sin = Math.sin(clat * Math.PI / 180);
-  var x = Math.floor(((lon + 180) / 360) * n2);
-  var y = Math.floor((0.5 - Math.log((1 + sin) / (1 - sin)) / (4 * Math.PI)) * n2);
-  var want = (x << zoom) | y;
-  var lo = 0, hi = bin.idx.length - 1;
-  while (lo <= hi){ var mid = (lo + hi) >> 1, v = bin.idx[mid]; if (v === want) return [bin.d[mid], bin.u[mid], bin.l[mid], bin.t[mid]]; if (v < want) lo = mid + 1; else hi = mid - 1; }
-  return null;
+  var cx = Math.floor(((lon + 180) / 360) * n2);
+  var cy = Math.floor((0.5 - Math.log((1 + sin) / (1 - sin)) / (4 * Math.PI)) * n2);
+  function find(want){
+    var lo = 0, hi = bin.idx.length - 1;
+    while (lo <= hi){ var mid = (lo + hi) >> 1, v = bin.idx[mid]; if (v === want) return mid; if (v < want) lo = mid + 1; else hi = mid - 1; }
+    return -1;
+  }
+  var dl = null, ul = null, la = null, t = 0, cnt = 0;
+  for (var dx = -1; dx <= 1; dx++) for (var dy = -1; dy <= 1; dy++){
+    var xx = cx + dx, yy = cy + dy;
+    if (xx < 0 || yy < 0 || xx >= n2 || yy >= n2) continue;
+    var mi = find((xx << zoom) | yy);
+    if (mi >= 0){ cnt++; t += bin.t[mi]; if (dl === null || bin.d[mi] < dl) dl = bin.d[mi]; if (ul === null || bin.u[mi] < ul) ul = bin.u[mi]; if (la === null || bin.l[mi] > la) la = bin.l[mi]; }
+  }
+  if (!cnt) return null;
+  return [dl, ul, la, t];
 }
 function terrLookup(sysId){
   var layer = terrLayer(sysId);
@@ -784,17 +794,17 @@ function terrEvidenceBox(s){
   if (s.id !== "c5" && s.id !== "wifi") return "";
   var lk = terrLookup(s.id);
   var kind = s.id === "wifi" ? "fixed-broadband" : "mobile";
-  var head = '<div class="ev-box"><h4>Measured at this place \u2014 Ookla Open Data, ' + TERR_PERIOD + '</h4>';
+  var head = '<div class="ev-box"><h4>Measured at this place \u2014 the low end to plan on \u00b7 Ookla Open Data, ' + TERR_PERIOD + '</h4>';
   if (lk.state === "loading") return head + '<p class="note">Loading the measurement database\u2026</p></div>';
   if (lk.state === "unavailable") return head + '<p class="note">The measurement pack could not be loaded in this copy of the page (it travels as a file beside the page), so the reference panel stands alone.</p></div>';
   if (lk.state === "none") return head + '<p class="note" style="color:var(--ink)"><strong>No service recorded.</strong> Ookla\u2019s database holds no ' + kind + ' measurements for this place in ' + TERR_PERIOD + ' \u2014 so on the evidence, there is no recorded service here. (A remote place can have service nobody has measured; nothing is in the database.)</p></div>';
-  var area = lk.scope === "preset" ? ('the ~2 km around the chosen point (' + lk.tiles + ' of the 9 surrounding tiles had data)') : 'the ~10 km tile containing the chosen point';
+  var area = lk.scope === "preset" ? ('the ~2 km around the chosen point (' + lk.tiles + ' of the 9 surrounding tiles had data)') : 'the ~10 km tiles around the chosen point';
   var html = head
-    + '<div class="frow"><span>Downlink \u2014 measured average</span><b>' + lk.d.toFixed(1) + ' Mbps</b></div>'
-    + '<div class="frow"><span>Uplink \u2014 measured average</span><b>' + lk.u.toFixed(1) + ' Mbps</b></div>'
-    + '<div class="frow"><span>Latency \u2014 measured average</span><b>' + Math.round(lk.l) + ' ms</b></div>'
+    + '<div class="frow"><span>Downlink \u2014 expect at least</span><b>' + lk.d.toFixed(1) + ' Mbps</b></div>'
+    + '<div class="frow"><span>Uplink \u2014 expect at least</span><b>' + lk.u.toFixed(1) + ' Mbps</b></div>'
+    + '<div class="frow"><span>Latency \u2014 up to</span><b>' + Math.round(lk.l) + ' ms</b></div>'
     + '<div class="frow"><span>Tests behind these figures</span><b>' + lk.t.toLocaleString("en-US") + '</b></div>'
-    + '<p class="note" style="color:var(--ink)">Averages of real users\u2019 Speedtest results across ' + area + ', <strong>all operators combined</strong> \u2014 measured performance at this place, not a coverage map and not one operator\u2019s published figures. Source: Ookla Open Data, ' + TERR_PERIOD + ', CC BY-NC-SA 4.0.</p>'
+    + '<p class="note" style="color:var(--ink)">Real users\u2019 Speedtest results across ' + area + '. Ookla\u2019s tiles combine <strong>all operators</strong>, and a traveller cannot choose which carrier their SIM lands on \u2014 so the figures above are the <strong>lowest measured tile</strong> around this place (the highest, for latency): the throughput to plan on, not the average. Source: Ookla Open Data, ' + TERR_PERIOD + ', CC BY-NC-SA 4.0.</p>'
     + (s.id === "wifi" ? '<p class="note" style="color:var(--ink)">The fixed layer measures fixed-broadband connections; indoors those are used over Wi-Fi, so this is the Wi-Fi-class experience at this place.</p>' : '')
     + (lk.t < 30 ? '<p class="note" style="color:var(--ink)"><strong>Thin evidence:</strong> fewer than 30 tests \u2014 treat these figures as indicative, not settled.</p>' : '')
     + '</div>';
