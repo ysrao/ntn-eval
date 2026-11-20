@@ -112,6 +112,8 @@ td.num,th.num{text-align:right;font-family:"IBM Plex Mono",monospace;font-weight
 .term-item select{min-height:40px;font-size:13.5px;padding:6px 8px}
 .fade-box{margin-top:12px;border:1.5px solid var(--amber);border-radius:12px;padding:12px;background:var(--amber-bg)}
 .ev-box{margin-top:12px;border:1.5px solid var(--line);border-radius:12px;padding:12px}
+.greyed{opacity:.35}
+.greyed input,.greyed select,.greyed button{pointer-events:none}
 .fade-box h4{margin:0 0 6px;font-size:14px}
 .fade-box .frow{display:flex;justify-content:space-between;gap:14px;font-size:13.5px;padding:3px 0;border-bottom:1px dashed var(--line)}
 .fade-box .frow span{color:var(--muted);font-weight:700}
@@ -164,9 +166,9 @@ footer li{margin-bottom:5px}
         </div>
         <p class="hint" id="systemHint">Cellular 5G and Wi-Fi are reference panels — no orbit to propagate. LEO / MEO are computed live from TLEs. GEO is analytic to its real slot longitude.</p>
         <p class="hint" id="geoSlotHint" style="display:none;background:var(--card2);border-radius:10px;padding:9px 11px;color:var(--ink)"></p>
-        <div class="label" style="margin-top:16px">2 · Date (UTC day)</div>
+        <div id="dateBlock"><div class="label" style="margin-top:16px">2 · Date (UTC day)</div>
         <input type="date" id="dateInput" aria-label="Date">
-        <p class="hint">Passes are computed for this UTC day. Accuracy is best near the TLE epoch shown after computing.</p>
+        <p class="hint">Passes are computed for this UTC day. Accuracy is best near the TLE epoch shown after computing.</p></div>
       </div>
       <div>
         <div class="label">3 · Location — pick from the menu</div>
@@ -177,24 +179,24 @@ footer li{margin-bottom:5px}
         </div>
         <p class="hint">…or enter any latitude / longitude above — the menu jumps to “Custom” and the passes are computed for exactly those coordinates.</p>
         <p class="hint" id="mobilityNote" style="background:var(--card2);border-radius:10px;padding:9px 11px;color:var(--ink)"><strong>Mobility: Fixed</strong> (chosen under <strong>Assumptions</strong> below) — the terminal stays at the chosen location for the whole UTC day. For LEO / MEO the satellite's own motion (about 7.5 km/s for LEO) dominates, so pass statistics barely change for a walking or driving user; switch Mobility to Mobile to frame a vehicle / ship / aircraft use case.</p>
-        <div class="label" style="margin-top:12px">Terrestrial (cellular / Wi-Fi) at this location</div>
+        <div id="terrBlock"><div class="label" style="margin-top:12px">Terrestrial (cellular / Wi-Fi) at this location</div>
         <select id="terrSelect" aria-label="Terrestrial availability at this location">
           <option value="available">Available</option>
           <option value="notavailable">Not available</option>
           <option value="unknown">Unknown</option>
         </select>
-        <p class="hint"><strong>How do we know? From measurements.</strong> This page consults <strong>Ookla Open Data (2025 Q3)</strong> — real Speedtest results recorded near the chosen place. If Ookla has even one test there, the card reads <strong>“Service exists”</strong> and shows the measured downlink, uplink and latency with the test count behind them; if it has none, the card reads <strong>“No service recorded”</strong>. The selector above shows that verdict and stays as <strong>your override</strong>: change it and your declaration governs. The figures combine <strong>all operators</strong> — which operator it is does not change whether service exists.</p>
-        <div class="label" style="margin-top:14px">4 · Minimum elevation — <span class="mono" id="minElVal">25°</span></div>
+        <p class="hint"><strong>How do we know? From measurements.</strong> This page consults <strong>Ookla Open Data (2025 Q3)</strong> — real Speedtest results recorded near the chosen place. If Ookla has even one test there, the card reads <strong>“Service exists”</strong> and shows the measured downlink, uplink and latency with the test count behind them; if it has none, the card reads <strong>“No service recorded”</strong>. The selector above shows that verdict and stays as <strong>your override</strong>: change it and your declaration governs. The figures are the <strong>lowest measured tile</strong> around the place — the throughput to plan on, whichever operator a traveller lands on.</p></div>
+        <div id="minElBlock"><div class="label" style="margin-top:14px">4 · Minimum elevation — <span class="mono" id="minElVal">25°</span></div>
         <input type="range" id="minEl" min="5" max="40" step="1" value="25" aria-label="Minimum elevation in degrees">
-        <p class="hint">Only passes above this elevation count as usable. Broadband terminals usually need 25°+; narrowband systems like Iridium are designed to work at lower elevations — try 10° and watch its coverage jump.</p>
-        <div class="label" style="margin-top:16px">5 · Continuity — what happens in the gaps?</div>
+        <p class="hint">Only passes above this elevation count as usable. Broadband terminals usually need 25°+; narrowband systems like Iridium are designed to work at lower elevations — try 10° and watch its coverage jump.</p></div>
+        <div id="continuityBlock"><div class="label" style="margin-top:16px">5 · Continuity — what happens in the gaps?</div>
         <div class="label" style="margin-bottom:4px">GEO fleet for fallback</div>
         <select id="fallbackGeoSelect" aria-label="GEO fleet for fallback"></select>
         <p class="hint">Fallback uses this fleet's actual slot — not an idealised GEO. If that fleet is not in view here, fallback is disabled.</p>
         <button type="button" class="toggle-btn" id="geoFallbackToggle" aria-pressed="false"><span class="pill" aria-hidden="true"></span> GEO fallback during gaps — OFF</button>
         <p class="hint" id="geoFallbackCaption" style="color:var(--ink)">What-if: a dual-mode terminal holds the session on GEO during gaps of the primary system. Combined coverage and the % of the day on GEO are shown. In real deployments this is a terminal/service feature, not automatic.</p>
         <p class="hint" id="geoFallbackStatus">Off. LEO / MEO cards show only their own passes — when a constellation has gaps, service simply waits for the next pass.</p>
-        <p class="hint">This is a <strong>modelled what-if</strong>, not an automatic behaviour. In real deployments, falling back to GEO during a LEO/MEO gap happens only if the terminal and service are built for multi-orbit operation. Where GEO is visible it keeps the session alive, but at GEO latency (~600 ms round-trip class) and lower throughput.</p>
+        <p class="hint">This is a <strong>modelled what-if</strong>, not an automatic behaviour. In real deployments, falling back to GEO during a LEO/MEO gap happens only if the terminal and service are built for multi-orbit operation. Where GEO is visible it keeps the session alive, but at GEO latency (~600 ms round-trip class) and lower throughput.</p></div>
       </div>
     </div>
     <div style="border-top:1px solid var(--line);margin-top:18px;padding-top:14px">
@@ -215,14 +217,14 @@ footer li{margin-bottom:5px}
             <option value="rain">Rain</option>
             <option value="indoor">Indoor</option>
           </select>
-          <div class="label" style="margin-bottom:4px;margin-top:10px">Rain rate R — climate regime for the computed fade</div>
+          <div id="rainBlock"><div class="label" style="margin-bottom:4px;margin-top:10px">Rain rate R — climate regime for the computed fade</div>
           <select id="rainRateSelect" aria-label="Rain rate for computed fade">
             <option value="auto">Auto — from the place's region (recommended)</option>
             <option value="10">10 mm/h — temperate / light</option>
             <option value="25">25 mm/h — heavy (temperate)</option>
             <option value="50">50 mm/h — tropical / monsoon</option>
             <option value="95">95 mm/h — extreme monsoon / cloudburst</option>
-          </select>
+          </select></div>
           <p class="hint">R is the point rain rate exceeded for about <strong>0.1% of the time</strong> in that regime — the stated basis of every fade figure on the cards. <strong>Auto</strong> resolves from the selected place: 50 mm/h in the tropics, 25 mm/h in temperate regions, 10 mm/h at high latitudes. The fade is computed on the slant path at the <strong>minimum elevation</strong> — the worst-case geometry of a pass — so most of a real pass, spent higher up, fades less. Applies only when Conditions = Rain.</p>
           <p class="hint">Rain fades Ku/Ka satellite links — the fade is <strong>computed</strong> on each satellite card (simplified ITU-R method, below) and the reference throughput is derated by the margin arithmetic shown there. Indoor blocks satellite paths: satellite cards will say so plainly (terrestrial assistance needed), while cellular and Wi-Fi remain. Geometry — passes and coverage — is computed the same; conditions change what the link can do, not where the satellites are.</p>
           <p class="hint"><strong>Rain basis — computed, read the band on each satellite card:</strong> specific attenuation γ = k·R<sup>α</sup> with ITU-R P.838 coefficients at the system's frequency, an effective slant path from the rain height (simplified ITU-R P.839, from latitude) at the minimum elevation, and the ITU-R P.618 horizontal-reduction factor — then the fade eats the card's stated clear-sky operating point and throughput follows the Shannon capacity ratio. The same coefficients that make Ku/Ka fade heavily make L-band come out negligible; nothing is special-cased per system.</p>
@@ -232,7 +234,7 @@ footer li{margin-bottom:5px}
       <div class="term-grid" id="termGrid"></div>
       <p class="hint">The reference throughput / latency panel on each card responds to its terminal choice. A standard phone on a satellite system shows the much lower direct-to-cell range — the handset uplink is the limiting link. Combinations that are not offered in reality (for example a standard phone on O3b) say <strong>“not offered — dedicated terminal required”</strong> instead of showing invented numbers.</p>
     </div>
-    <div style="border-top:1px solid var(--line);margin-top:18px;padding-top:14px">
+    <div id="gwSection" style="border-top:1px solid var(--line);margin-top:18px;padding-top:14px">
       <div class="label">7 · Gateway / interconnection — how does traffic reach the internet, and can you choose the gateway?</div>
       <p class="hint" style="max-width:900px">A satellite pass alone is not internet service: the satellite must also reach a <strong>gateway earth station</strong> connected to the internet. <strong>Until this version, no gateway was modelled at all</strong> — coverage was pure user-side geometry. Now you choose, for the selected satellite system, the interconnection mode. <strong>Bent-pipe:</strong> the satellite is a mirror in the sky — a pass counts as <em>service</em> only while the <strong>same satellite is simultaneously above the minimum elevation at both your location and the selected gateway</strong>; the page then shows geometric coverage <em>and</em> service coverage, and the sample-pass delay includes the gateway leg (user → satellite → gateway). <strong>Inter-satellite links (ISL):</strong> traffic hops across satellites to a distant gateway, so service coverage equals geometric coverage — but end-to-end delay can exceed the single user-leg delay shown. Defaults follow reality: Starlink = ISL (later satellites), Iridium = ISL (it has crosslinks), OneWeb = bent-pipe (Gen-1 has no ISL), O3b = bent-pipe, GEO fleets = bent-pipe (single hop to its gateway). Gateway lists are <strong>representative published sites, approximate</strong> locations — “Nearest gateway (auto)” means any listed gateway will do. Changing mode or gateway clears computed results — press Compute again. Every listed site is now <strong>tagged with its country</strong>, and the lists include <strong>Indian sites where the operator is known to have or plan them</strong> (Starlink's planned Mumbai / Chennai gateways, OneWeb's Indian SNP sites in Gujarat and Tamil Nadu, and an Indian GEO teleport at Hyderabad — all representative / approximate). Where a system has <strong>no</strong> Indian gateway in its list — Iridium and O3b, as listed here — the page says so openly rather than papering over it.</p>
       <div class="label" style="margin-top:12px">Data-residency rule — gateway localisation</div>
@@ -584,7 +586,28 @@ function renderSystemSelectors(){
   updateGeoSlotHint();
 }
 function onSystemChanged(){
-  state.results={}; renderSystemSelectors(); renderTermGrid(); renderGwGrid(); renderCards(); updateEpochBar(null); updateFallbackStatus(); updateGeoSlotHint(); updateResidencyStatus();
+  state.results={}; renderSystemSelectors(); renderTermGrid(); renderGwGrid(); renderCards(); updateEpochBar(null); updateFallbackStatus(); updateGeoSlotHint(); updateResidencyStatus(); syncFieldStates();
+}
+/* Grey out the fields that do not apply to the selected system: with Cellular
+   or Wi-Fi selected, the satellite fields (date, minimum elevation, GEO
+   fallback, rain rate, gateways) are irrelevant; with a satellite selected,
+   the terrestrial selector is. Terminal, location, mobility and conditions
+   always stay live. */
+function setGrey(id, on, restore){
+  var el = $(id); if (!el) return;
+  el.classList.toggle("greyed", on);
+  var ctrls = el.querySelectorAll("input, select, button, textarea");
+  for (var i = 0; i < ctrls.length; i++) ctrls[i].disabled = on;
+  if (!on && restore) restore();
+}
+function syncFieldStates(){
+  var terr = (state.systemId === "c5" || state.systemId === "wifi");
+  setGrey("dateBlock", terr);
+  setGrey("minElBlock", terr);
+  setGrey("continuityBlock", terr);
+  setGrey("rainBlock", terr, function(){ var rr = $("rainRateSelect"); if (rr) rr.disabled = state.conditions !== "rain"; });
+  setGrey("gwSection", terr, function(){ renderGwGrid(); });
+  setGrey("terrBlock", !terr);
 }
 function renderLocMenu(){
   var sel = $("locSelect"); sel.innerHTML = "";
@@ -712,7 +735,7 @@ function initControls(){
   var rrSel = $("rainRateSelect");
   if (rrSel){ rrSel.disabled = state.conditions !== "rain"; rrSel.addEventListener("change", function(e){ state.rainRate = e.target.value; renderCards(); }); }
   $("computeBtn").addEventListener("click", function(){ computeAll(); });
-  updateFallbackStatus(); updateMobilityNote();
+  updateFallbackStatus(); updateMobilityNote(); syncFieldStates();
 }
 
 /* ---------- cards ---------- */
