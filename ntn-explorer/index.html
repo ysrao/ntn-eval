@@ -38,6 +38,9 @@ p{margin:0}
 .film-stage[data-state="playing"] .film-toggle .icon-pause{display:block}
 .film-stage[data-state="playing"] .film-toggle .icon-play{display:none}
 .film-toggle .icon-play{margin-left:3px}
+.film-seek{position:absolute;left:16px;right:16px;bottom:12px;opacity:0;pointer-events:none;transition:opacity .3s ease}
+.film-stage.show-controls .film-seek{opacity:1;pointer-events:auto}
+.film-seek input{width:100%;margin:0;accent-color:#7cc4ea;cursor:pointer}
 .lede strong{color:var(--ink)}
 .label{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
 button{font:inherit;cursor:pointer}
@@ -144,8 +147,9 @@ footer li{margin-bottom:5px}
       Your browser cannot play this video inline.
     </video>
     <div class="film-toggle" aria-hidden="true"><svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.5v13l11-6.5z"/></svg><svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></div>
+      <div class="film-seek"><input type="range" id="filmSeek" min="0" max="1000" step="1" value="0" aria-label="Move back or forward in the film"></div>
     </div>
-    <figcaption>Tap the film to play — the story in 100 seconds, terrestrial first, then satellite.</figcaption>
+    <figcaption>Tap the film to play — drag the bar to move back or forward. The story in 100 seconds, terrestrial first, then satellite.</figcaption>
   </figure>
 
   <section class="controls" aria-label="Explorer controls">
@@ -1494,9 +1498,11 @@ function computeAll(){
 
 <script>
 // Film controls: the film itself is the control — nothing is overlaid on
-// it at rest or while it plays. A tap (or click, mouse move, or keyboard
-// focus) on the film flashes the play/pause icon, which fades away again
-// after two seconds. Tapping the film toggles play/pause.
+// it at rest. A tap (or click, mouse move, or keyboard focus) on the film
+// flashes the play/pause icon and the seek bar. While the film plays they
+// fade away after two seconds; while it is paused they stay, so the bar
+// can be dragged to move back or forward. Tapping the film toggles
+// play/pause; dragging the bar seeks, and never toggles.
 (function(){
   var stage=document.getElementById('filmStage'); if(!stage) return;
   var video=stage.querySelector('video'); if(!video) return;
@@ -1510,7 +1516,7 @@ function computeAll(){
     sync();
     stage.classList.add('show-controls');
     if(hideTimer) clearTimeout(hideTimer);
-    hideTimer=setTimeout(function(){ stage.classList.remove('show-controls'); },2000);
+    if(isPlaying()){ hideTimer=setTimeout(function(){ stage.classList.remove('show-controls'); },2000); }
   }
   function toggle(){
     if(isPlaying()){
@@ -1526,14 +1532,7 @@ function computeAll(){
   stage.addEventListener('keydown', function(e){
     if(e.key==='Enter' || e.key===' '){ e.preventDefault(); toggle(); }
   });
-  stage.addEventListener('mousemove', function(){
-    if(stage.classList.contains('show-controls')){
-      if(hideTimer) clearTimeout(hideTimer);
-      hideTimer=setTimeout(function(){ stage.classList.remove('show-controls'); },2000);
-    }else{
-      show();
-    }
-  });
+  stage.addEventListener('mousemove', show);
   stage.addEventListener('focus', function(){
     sync();
     stage.classList.add('show-controls');
@@ -1543,6 +1542,24 @@ function computeAll(){
   video.addEventListener('play', show);
   video.addEventListener('pause', show);
   video.addEventListener('ended', show);
+  var seek=document.getElementById('filmSeek');
+  var scrubbing=false;
+  if(seek){
+    seek.addEventListener('click', function(e){ e.stopPropagation(); });
+    seek.addEventListener('pointerdown', function(e){
+      e.stopPropagation(); scrubbing=true;
+      if(hideTimer) clearTimeout(hideTimer);
+      stage.classList.add('show-controls');
+    });
+    seek.addEventListener('input', function(){
+      if(video.duration){ try{ video.currentTime=(seek.value/1000)*video.duration; }catch(err){} }
+    });
+    seek.addEventListener('change', function(){ scrubbing=false; show(); });
+    seek.addEventListener('pointerup', function(){ show(); });
+    video.addEventListener('timeupdate', function(){
+      if(!scrubbing && video.duration){ seek.value=Math.round((video.currentTime/video.duration)*1000); }
+    });
+  }
   sync();
 })();
 </script>
