@@ -189,7 +189,7 @@ footer li{margin-bottom:5px}
           <option value="notavailable">Not available</option>
           <option value="unknown">Unknown</option>
         </select>
-        <p class="hint"><strong>How do we know? From measurements.</strong> This page consults <strong>Ookla Open Data (2025 Q3)</strong> — real Speedtest results recorded near the chosen place. If Ookla has even one test there, the card reads <strong>“Service exists”</strong> and shows the measured downlink, uplink and latency with the test count behind them; if it has none, the card reads <strong>“No service recorded”</strong>. The selector above shows that verdict and stays as <strong>your override</strong>: change it and your declaration governs. The figures are the <strong>lowest measured tile</strong> around the place — the throughput to plan on, whichever operator a traveller lands on.</p></div>
+        <p class="hint"><strong>How do we know? From measurements.</strong> This page consults <strong>Ookla Open Data (2025 Q3)</strong> — real Speedtest results recorded near the chosen place. If Ookla has even one test there, the card reads <strong>“Service exists”</strong> and shows the measured downlink, uplink and latency with the test count behind them; if it has none, the card reads <strong>“No service recorded”</strong>. The selector above shows that verdict and stays as <strong>your override</strong>: change it and your declaration governs. The figures are the <strong>test-weighted 10th percentile</strong> across the tiles around the place — a low end set by where tests actually happened, the throughput to plan on, whichever operator a traveller lands on.</p></div>
         <div id="minElBlock"><div class="label" style="margin-top:14px">4 · Minimum elevation — <span class="mono" id="minElVal">25°</span></div>
         <input type="range" id="minEl" min="5" max="40" step="1" value="25" aria-label="Minimum elevation in degrees">
         <p class="hint">Only passes above this elevation count as usable. Broadband terminals usually need 25°+; narrowband systems like Iridium are designed to work at lower elevations — try 10° and watch its coverage jump.</p></div>
@@ -231,7 +231,7 @@ footer li{margin-bottom:5px}
           </select></div>
           <p class="hint">R is the point rain rate exceeded for about <strong>0.1% of the time</strong> in that regime — the stated basis of every fade figure on the cards. <strong>Auto</strong> resolves from the selected place: 50 mm/h in the tropics, 25 mm/h in temperate regions, 10 mm/h at high latitudes. The fade is computed on the slant path at the <strong>minimum elevation</strong> — the worst-case geometry of a pass — so most of a real pass, spent higher up, fades less. Applies only when Conditions = Rain.</p>
           <p class="hint">Rain fades Ku/Ka satellite links — the fade is <strong>computed</strong> on each satellite card (simplified ITU-R method, below) and the reference throughput is derated by the margin arithmetic shown there. Indoor blocks satellite paths: satellite cards will say so plainly (terrestrial assistance needed), while cellular and Wi-Fi remain. Geometry — passes and coverage — is computed the same; conditions change what the link can do, not where the satellites are.</p>
-          <p class="hint"><strong>Rain basis — computed, read the band on each satellite card:</strong> specific attenuation γ = k·R<sup>α</sup> with ITU-R P.838 coefficients at the system's frequency, an effective slant path from the rain height (simplified ITU-R P.839, from latitude) at the minimum elevation, and the ITU-R P.618 horizontal-reduction factor — then the fade eats the card's stated clear-sky operating point and throughput follows the Shannon capacity ratio. The same coefficients that make Ku/Ka fade heavily make L-band come out negligible; nothing is special-cased per system.</p>
+          <p class="hint"><strong>Rain basis — computed, read the band on each satellite card:</strong> specific attenuation γ = k·R<sup>α</sup> with ITU-R P.838 coefficients at the system's frequency, an effective slant path from the rain height (simplified ITU-R P.839, from latitude) at the minimum elevation — for GEO fleets at the fleet's fixed elevation at your place — and the ITU-R P.618 horizontal-reduction factor — then the fade eats the card's stated clear-sky operating point and throughput follows the Shannon capacity ratio. The same coefficients that make Ku/Ka fade heavily make L-band come out negligible; nothing is special-cased per system.</p>
         </div>
       </div>
       <div class="label" style="margin-top:14px">Terminal — for the selected system only (pre-set to what it normally uses)</div>
@@ -283,7 +283,7 @@ footer li{margin-bottom:5px}
     <p class="sub" style="max-width:none;margin-top:10px"><strong>Terminal — phone, PC, or dish?</strong> You choose it, per system, in the <strong>Assumptions</strong> controls; each card's reference panel follows your choice. The satellite broadband figures are for the dedicated terminals (flat-panel or dish) that are each system's default, <em>not</em> a standard phone. Switch a satellite system to “Standard phone” and you get the direct-to-cell reality instead: direct-to-standard-phone satellite service does exist (emergency messaging and, increasingly, low-rate text/data), but it is a far more constrained link — the handset uplink, a tiny antenna and low power, is the limiting link — and combinations that are not offered at all say so rather than inventing numbers.</p>
     <p class="sub" style="max-width:none;margin-top:10px"><strong>Seeing polar coverage:</strong> pick <strong>Svalbard (78.2°N, 15.6°E)</strong> or <strong>South Pole (−90°, 0°)</strong> in the location menu, choose Category = GEO and any fleet, and press Compute. That fleet will show <strong>below your horizon / too low — not served by this fleet</strong> there — GEO cannot serve above roughly ±75–81° latitude, and a fleet far in longitude fails even sooner. Polar-orbit constellations (Iridium, and OneWeb's polar planes) are the ones that still cover the poles; Starlink's coverage thins at the extremes except for its polar shells. That contrast <em>is</em> how you see polar coverage on this page.</p>
     <p class="sub" style="max-width:none;margin-top:10px"><strong>What happens to performance in a gap — and on fallback?</strong> Without fallback, an intermittent LEO/MEO service simply pauses: voice drops, a data session stalls or times out, and store-and-forward traffic waits for the next pass. With the GEO-fallback toggle ON, the session survives the gap, but performance steps down for that share of the day — latency jumps to the ~600 ms round-trip class (noticeable on voice and interactive use, fine for messaging, email and buffered streaming) and throughput falls to the GEO reference range on its card. Even within a pass, performance is not flat: it is best near the pass's peak elevation and weakest near rise/set, where range is longest, delay and Doppler are highest, and obstructions bite — which is why the minimum-elevation slider changes the answer so much.</p>
-    <p class="sub" style="max-width:none;margin-top:10px"><strong>How do we know cellular / Wi-Fi is available here — is it from a database?</strong> No. This page consults <strong>no coverage database, operator map or measurement feed</strong>. Availability is the visible selector in control 3 — <em>Terrestrial (cellular / Wi-Fi) at this location: Available / Not available / Unknown</em>. The place menu only suggests a default (cities → Available, the Mid-Pacific point and South Pole → Not available, custom coordinates → Unknown); the declaration is yours and the Cellular 5G and Wi-Fi cards obey it exactly: Not available removes their performance panels, Unknown shows them flagged as unverified.</p>
+    <p class="sub" style="max-width:none;margin-top:10px"><strong>How do we know cellular / Wi-Fi is available here — is it from a database?</strong> Yes — a measurement database, and it is named on the cards: <strong>Ookla Open Data (2025 Q3)</strong>, real users’ Speedtest results near the chosen place. If Ookla recorded tests there, the Cellular 5G and Wi-Fi cards show the measured panel and treat service as existing; if it recorded none, they say “No service recorded” — a statement about the database, not proof that no signal exists. The selector in control 3 — <em>Terrestrial (cellular / Wi-Fi) at this location: Available / Not available / Unknown</em> — is your override: once you set it, your declaration wins over the measurement (Not available removes their performance panels, Unknown shows them flagged as unverified).</p>
     <p class="sub" style="max-width:none;margin-top:10px"><strong>Which gateway connects you to the internet — and can you choose it?</strong> Yes — control 7, per satellite system. In <strong>bent-pipe</strong> mode the gateway is on the critical path: service exists only while one satellite sees both you and the gateway, which is why bent-pipe <em>service coverage</em> can be well below geometric coverage (OneWeb and O3b show this most). The sample-pass delay then includes both legs. In <strong>ISL</strong> mode (Starlink's later satellites, Iridium's crosslinks) the constellation routes traffic in space to whatever gateway is convenient, so any visible satellite can serve you — at the price of extra, variable routing delay the single-leg figure does not show. Gateway sites listed are representative published sites at approximate locations, not an operator's live routing table — real networks assign gateways dynamically.</p>
     <p class="sub" style="max-width:none;margin-top:10px"><strong>What about India's rule that data must enter and leave through a gateway in India?</strong> That is the <strong>data-residency (gateway localisation) rule</strong> in control 7 — India is the worked example, under its DPDP framework and satcom (GMPCS) licence conditions. The toggle defaults ON for Indian locations and OFF elsewhere, and you can change it either way. With it ON, bent-pipe service coverage is computed <em>only</em> against gateways in the user's country — every listed gateway is tagged with its country, out-of-country sites are greyed out as not permitted, and a system with <strong>no in-country gateway listed</strong> (Iridium and O3b, in these lists) shows service as <strong>“not established”</strong> rather than a flattering percentage: the satellites still pass, but the traffic has nowhere lawful to land. ISL does not evade the rule — crosslinks move traffic in space, but it must still be landed at an in-country gateway. For GEO the rule bites on the <strong>teleport</strong>, not the slot, and <strong>INSAT / GSAT is India's in-country fleet</strong>. Starlink's Indian gateways (Mumbai, Chennai) are shown as planned and OneWeb's as its Indian SNP sites (Gujarat, Tamil Nadu) — representative / approximate, like every gateway on the page.</p>
     <p class="sub" style="max-width:none;margin-top:10px"><strong>How is the rain fade computed?</strong> By a simplified, transparent form of the ITU-R method, on the band printed on each satellite card (Starlink Ku, OneWeb Ku, O3b Ka, GEO Ku downlink, Iridium L-band, Starlink direct-to-cell S-band). Specific attenuation is γ = k·R<sup>α</sup> with <strong>ITU-R P.838-3</strong> coefficients k, α at the system's frequency (polarisation-averaged, interpolated in frequency). The rain rate <strong>R is yours to choose</strong> in control 6 — 10 / 25 / 50 / 95 mm/h for temperate-light, heavy, tropical-monsoon and extreme regimes, or Auto from the place's region — and is read as the rate exceeded for about <strong>0.1% of the time</strong>. The effective path is the slant path through the rain layer, L<sub>s</sub> = h<sub>R</sub> / sin θ, with rain height h<sub>R</sub> from a simplified <strong>ITU-R P.839</strong> latitude profile and θ set to the <strong>selected minimum elevation</strong> — the worst-case geometry of a pass, stated on the card; most of a pass is spent higher, on a shorter path, and fades less. The <strong>P.618</strong> horizontal-reduction factor accounts for rain cells being smaller than the full slant path. Fade A = γ·L<sub>s</sub>·r then <strong>eats the link margin dB-for-dB</strong>: each card states its clear-sky operating point, subtracts the fade, and scales throughput by the Shannon capacity ratio of faded to clear SNR — the arithmetic is printed on the card, not hidden. Because one set of coefficients drives every band, <strong>L-band (Iridium, GEO handheld) comes out at a few hundredths of a dB on its own</strong> — negligible by physics, not by exemption — S-band is nearly as quiet, and Ku/Ka take the real hit, growing with rain rate and shrinking as elevation rises. Try it: with Rain on, drag the minimum-elevation slider and watch the fade fall.</p>
@@ -300,7 +300,7 @@ footer li{margin-bottom:5px}
       <li>Orbital data: CelesTrak TLE groups (Starlink, OneWeb, Iridium-NEXT, SES), fetched live at compute time; epoch shown above the results.</li>
       <li>Propagation: SGP4 via satellite.js in-browser; validation anchors from our Python Skyfield/SGP4 engine run on 18–19 Nov 2026 TLEs.</li>
       <li>Reference throughput / latency / cost: public list prices and typical field ranges (mobile 5G, home Wi-Fi, Starlink, OneWeb, Iridium Certus, SES O3b mPOWER, GEO VSAT and GEO handheld, direct-to-cell messaging class), shown for the terminal selected under Assumptions — orientation only, not quotes and not measurements. When Rain is selected, satellite ranges are derated from those clear-sky ranges by the computed fade (simplified ITU-R P.618 / P.838 / P.839, rain rate and basis stated in control 6) and the Shannon margin arithmetic printed on each card.</li>
-      <li>Terrestrial availability: <strong>no database is consulted</strong> — the Available / Not available / Unknown selector is the user's declaration; place presets only suggest its default.</li>
+      <li>Terrestrial availability: <strong>measured evidence</strong> — Ookla Open Data (2025 Q3) Speedtest results near the place, shown on the Cellular 5G and Wi-Fi cards as a test-weighted low end to plan on; the Available / Not available / Unknown selector in control 3 is the user's override and wins over the measurement once set.</li>
       <li>Gateways: representative published gateway / teleport sites at approximate locations, listed per system in control 7, each tagged with its country. Bent-pipe service coverage is computed live (same satellite above the minimum elevation at user and gateway simultaneously; a Kepler pre-filter narrows the instants and SGP4 decides); it is a modelling choice, not an operator routing table.</li>
       <li>Data residency: the gateway-localisation toggle in control 7 models India's requirement (DPDP framework + satcom / GMPCS licence conditions) that traffic enter and leave the internet only through a gateway inside the country. Indian sites included as representative / approximate: Starlink Mumbai &amp; Chennai (planned), OneWeb SNP sites in Gujarat &amp; Tamil Nadu, and a GEO teleport at Hyderabad. Iridium and O3b list no Indian gateway here, and the page states that openly; with the rule ON at an Indian location their service reads “not established — no in-country gateway listed”.</li>
       <li>Companion paper: “A Comparative Assessment of Non-Terrestrial and Terrestrial Networks for 6G” (Yenamandra, Ram &amp; Lalwani).</li>
@@ -318,6 +318,9 @@ var PLACES = [
   { id:"london", label:"London, UK", lat:51.5074, lon:-0.1278, terr:"city" },
   { id:"sydney", label:"Sydney, Australia", lat:-33.8688, lon:151.2093, terr:"city" },
   { id:"nairobi", label:"Nairobi, Kenya", lat:-1.2921, lon:36.8219, terr:"city" },
+  { id:"johannesburg", label:"Johannesburg, South Africa", lat:-26.2049, lon:28.0473, terr:"city" },
+  { id:"lusaka", label:"Lusaka, Zambia", lat:-15.3875, lon:28.3228, terr:"city" },
+  { id:"lagos", label:"Lagos, Nigeria", lat:6.5244, lon:3.3792, terr:"city" },
   { id:"saopaulo", label:"São Paulo, Brazil", lat:-23.5505, lon:-46.6333, terr:"city" },
   { id:"fairbanks", label:"Fairbanks, Alaska, USA — high latitude", lat:64.8378, lon:-147.7164, terr:"city" },
   { id:"svalbard", label:"Svalbard (Longyearbyen) — polar, 78°N", lat:78.2232, lon:15.6267, terr:"rural" },
@@ -381,7 +384,8 @@ var GATEWAYS = {
     { name:"Merrillan, WI, USA", lat:44.45, lon:-90.84, country:"USA" },
     { name:"Manassas, VA, USA", lat:38.75, lon:-77.47, country:"USA" },
     { name:"Mumbai, India (planned)", lat:19.08, lon:72.88, country:"India" },
-    { name:"Chennai, India (planned)", lat:13.08, lon:80.27, country:"India" }
+    { name:"Chennai, India (planned)", lat:13.08, lon:80.27, country:"India" },
+    { name:"Lagos, Nigeria", lat:6.52, lon:3.37, country:"Nigeria" }
   ],
   oneweb: [
     { name:"Fairbanks, AK, USA", lat:64.84, lon:-147.72, country:"USA" },
@@ -389,7 +393,8 @@ var GATEWAYS = {
     { name:"Svalbard, Norway", lat:78.23, lon:15.39, country:"Norway" },
     { name:"Perth, Australia", lat:-31.95, lon:115.86, country:"Australia" },
     { name:"Mehsana, Gujarat, India", lat:23.59, lon:72.38, country:"India" },
-    { name:"Tamil Nadu, India (SNP site)", lat:10.80, lon:79.10, country:"India" }
+    { name:"Tamil Nadu, India (SNP site)", lat:10.80, lon:79.10, country:"India" },
+    { name:"Luanda, Angola", lat:-8.84, lon:13.23, country:"Angola" }
   ],
   iridium: [
     { name:"Tempe, AZ, USA", lat:33.41, lon:-111.93, country:"USA" },
@@ -400,13 +405,15 @@ var GATEWAYS = {
     { name:"Manassas, VA, USA", lat:38.75, lon:-77.47, country:"USA" },
     { name:"Perth, Australia", lat:-31.95, lon:115.86, country:"Australia" },
     { name:"Dubai, UAE", lat:25.20, lon:55.27, country:"UAE" },
-    { name:"Kapolei, HI, USA", lat:21.33, lon:-158.06, country:"USA" }
+    { name:"Kapolei, HI, USA", lat:21.33, lon:-158.06, country:"USA" },
+    { name:"Johannesburg, South Africa", lat:-26.20, lon:28.05, country:"South Africa" }
   ],
   geo: [
     { name:"Teleport — Atlanta, GA, USA", lat:33.75, lon:-84.39, country:"USA" },
     { name:"Teleport — London, UK", lat:51.51, lon:-0.13, country:"UK" },
     { name:"Teleport — Perth, Australia", lat:-31.95, lon:115.86, country:"Australia" },
-    { name:"Teleport — Hyderabad, India", lat:17.39, lon:78.49, country:"India" }
+    { name:"Teleport — Hyderabad, India", lat:17.39, lon:78.49, country:"India" },
+    { name:"Teleport — Johannesburg, South Africa", lat:-26.20, lon:28.05, country:"South Africa" }
   ]
 };
 var DEFAULT_GW_MODE = { starlink:"isl", oneweb:"bent", iridium:"isl", o3b:"bent", geo:"bent", geo_ideal:"bent", geo_insat:"bent", geo_palapa:"bent", geo_nusantara:"bent", geo_astra:"bent", geo_hotbird:"bent", geo_galaxy:"bent", geo_starone:"bent", geo_inmarsat:"bent", geo_thuraya:"bent" };
@@ -425,11 +432,23 @@ function gwListFor(sysId){
   var idx = parseInt(sel, 10);
   return (isFinite(idx) && all[idx]) ? [all[idx]] : all.slice();
 }
+function havKm(lat1, lon1, lat2, lon2){
+  var p = Math.PI/180;
+  var a = Math.pow(Math.sin((lat2-lat1)*p/2), 2) + Math.cos(lat1*p)*Math.cos(lat2*p)*Math.pow(Math.sin((lon2-lon1)*p/2), 2);
+  return 6371 * 2 * Math.asin(Math.sqrt(a));
+}
+function nearestListedGateway(s){
+  var c = currentCoords();
+  var list = GATEWAYS[gwKeyFor(s.id)] || [];
+  var best = null;
+  list.forEach(function(g){ var d = havKm(c.lat, c.lon, g.lat, g.lon); if (!best || d < best.dist) best = { name:g.name, dist:d }; });
+  return best;
+}
 function gwSelLabel(sysId){
   var sel = state.gwSel[sysId];
-  if (sel === "auto" || !sel) return "Nearest gateway (auto — any listed site)";
+  if (sel === "auto" || !sel) return "Any listed gateway (auto)";
   var g = ((GATEWAYS[gwKeyFor(sysId)] || GATEWAYS[sysId] || []))[parseInt(sel, 10)];
-  return g ? g.name + " (" + g.lat.toFixed(2) + ", " + g.lon.toFixed(2) + ")" : "Nearest gateway (auto)";
+  return g ? g.name + " (" + g.lat.toFixed(2) + ", " + g.lon.toFixed(2) + ")" : "Any listed gateway (auto)";
 }
 /* ---------- data-residency (gateway localisation) ---------- */
 function isIndiaCoords(lat, lon){ return lat >= 6 && lat <= 37.5 && lon >= 68 && lon <= 98; }
@@ -437,7 +456,7 @@ function userCountryName(){
   var c = currentCoords();
   if (isIndiaCoords(c.lat, c.lon)) return "India";
   if (state.place !== "custom"){
-    var map = { mountain:"USA", london:"UK", sydney:"Australia", nairobi:"Kenya", saopaulo:"Brazil", fairbanks:"USA", svalbard:"Norway" };
+    var map = { mountain:"USA", london:"UK", sydney:"Australia", nairobi:"Kenya", johannesburg:"South Africa", lusaka:"Zambia", lagos:"Nigeria", saopaulo:"Brazil", fairbanks:"USA", svalbard:"Norway" };
     if (map[state.place]) return map[state.place];
   }
   return null;
@@ -693,7 +712,7 @@ function renderGwGrid(){
   mode.appendChild(o1); mode.appendChild(o2); mode.value = state.gwMode[s.id] || defMode;
   var gw = document.createElement("select"); gw.id = "gwsel-" + s.id; gw.style.marginTop = "6px";
   gw.setAttribute("aria-label", "Gateway site for " + s.name);
-  var oa = document.createElement("option"); oa.value = "auto"; oa.textContent = "Nearest gateway (auto)"; gw.appendChild(oa);
+  var oa = document.createElement("option"); oa.value = "auto"; oa.textContent = "Any listed gateway (auto)"; gw.appendChild(oa);
   var uc = userCountryName();
   (GATEWAYS[gwKeyFor(s.id)] || []).forEach(function(g, gi){
     var o = document.createElement("option"); o.value = String(gi);
@@ -760,7 +779,7 @@ function initControls(){
    cannot load (e.g. a downloaded single-file copy), the page falls back to the
    declaration selector, exactly as before. */
 var TERR_PERIOD = "2025 Q3 (Jul\u2013Sep 2025)";
-var TERR_PRESETS = {"mobile":{"mountain":[19.1,2.1,45,36,7],"bengaluru":[75.4,9.9,48,1010,9],"london":[27.3,16.0,96,344,9],"sydney":[145.4,23.7,60,1203,9],"nairobi":[16.4,4.9,148,118,8],"saopaulo":[212.8,26.3,49,475,9],"fairbanks":[50.4,0.4,57,6,3],"svalbard":[308.7,160.0,109,1,1],"southpole":null,"midpacific":null},"fixed":{"mountain":[42.6,17.7,23,207,8],"bengaluru":[80.3,80.8,14,1830,9],"london":[124.4,99.2,53,2575,8],"sydney":[99.4,36.3,37,3768,9],"nairobi":[9.6,12.5,30,190,9],"saopaulo":[194.1,131.5,19,1967,9],"fairbanks":[25.8,10.8,119,68,8],"svalbard":[157.4,55.0,64,7,3],"southpole":null,"midpacific":null}};
+var TERR_PRESETS = {"mobile":{"mountain":[79.7,4.5,45,36,7],"bengaluru":[98.9,14.7,36,1010,9],"london":[91.8,16.0,65,344,9],"sydney":[145.4,27.6,58,1203,9],"nairobi":[23.3,14.5,55,118,8],"johannesburg":[59.0,20.6,28,131,8],"lusaka":[37.1,10.1,68,460,9],"lagos":[21.3,13.6,68,165,9],"saopaulo":[245.8,29.8,24,475,9],"fairbanks":[50.4,0.4,57,6,3],"svalbard":[308.7,160.0,109,1,1],"southpole":null,"midpacific":null},"fixed":{"mountain":[219.8,47.3,20,207,8],"bengaluru":[100.1,97.8,7,1830,9],"london":[124.4,116.0,20,2575,8],"sydney":[99.4,52.3,15,3768,9],"nairobi":[11.4,13.4,21,190,9],"johannesburg":[22.9,19.5,206,164,9],"lusaka":[14.0,11.6,49,34,6],"lagos":[30.6,8.0,85,142,8],"saopaulo":[194.1,131.5,19,1967,9],"fairbanks":[77.9,31.9,44,68,8],"svalbard":[157.4,55.0,64,7,3],"southpole":null,"midpacific":null}};
 var terrTouched = false;
 var TERR_BIN = { mobile:null, fixed:null };
 var TERR_LOADING = { mobile:false, fixed:false };
@@ -783,6 +802,18 @@ function terrEnsure(layer){
     }).catch(function(){ TERR_LOADING[layer] = false; TERR_BIN[layer] = "failed"; renderCards(); });
   } catch(e){ TERR_LOADING[layer] = false; TERR_BIN[layer] = "failed"; }
 }
+/* Test-weighted percentile across the tiles around a place: tiles sorted by
+   the metric and weighted by their test counts; the value returned is where
+   the lowest (or, for latency, highest) 10% of all tests sits. A sparsely
+   tested tile can no longer set the plan-on figure on its own. */
+function terrWPct(rows, col, fromTop){
+  var sorted = rows.slice().sort(function(a, b){ return fromTop ? b[col] - a[col] : a[col] - b[col]; });
+  var tot = 0; sorted.forEach(function(r){ tot += r[3]; });
+  if (tot <= 0) return sorted[0][col];
+  var need = 0.10 * tot, acc = 0;
+  for (var i = 0; i < sorted.length; i++){ acc += sorted[i][3]; if (acc >= need) return sorted[i][col]; }
+  return sorted[sorted.length - 1][col];
+}
 function terrBinLookup(bin, lat, lon){
   var zoom = bin.zoom, n2 = Math.pow(2, zoom);
   var clat = Math.max(-85.05112878, Math.min(85.05112878, lat));
@@ -794,15 +825,15 @@ function terrBinLookup(bin, lat, lon){
     while (lo <= hi){ var mid = (lo + hi) >> 1, v = bin.idx[mid]; if (v === want) return mid; if (v < want) lo = mid + 1; else hi = mid - 1; }
     return -1;
   }
-  var dl = null, ul = null, la = null, t = 0, cnt = 0;
+  var rows = [], t = 0;
   for (var dx = -1; dx <= 1; dx++) for (var dy = -1; dy <= 1; dy++){
     var xx = cx + dx, yy = cy + dy;
     if (xx < 0 || yy < 0 || xx >= n2 || yy >= n2) continue;
     var mi = find((xx << zoom) | yy);
-    if (mi >= 0){ cnt++; t += bin.t[mi]; if (dl === null || bin.d[mi] < dl) dl = bin.d[mi]; if (ul === null || bin.u[mi] < ul) ul = bin.u[mi]; if (la === null || bin.l[mi] > la) la = bin.l[mi]; }
+    if (mi >= 0){ rows.push([bin.d[mi], bin.u[mi], bin.l[mi], bin.t[mi]]); t += bin.t[mi]; }
   }
-  if (!cnt) return null;
-  return [dl, ul, la, t];
+  if (!rows.length) return null;
+  return [terrWPct(rows, 0, false), terrWPct(rows, 1, false), terrWPct(rows, 2, true), t];
 }
 function terrLookup(sysId){
   var layer = terrLayer(sysId);
@@ -831,7 +862,7 @@ function terrEvidenceBox(s){
   if (s.id !== "c5" && s.id !== "wifi") return "";
   var lk = terrLookup(s.id);
   var kind = s.id === "wifi" ? "fixed-broadband" : "mobile";
-  var head = '<div class="ev-box"><h4>Measured at this place \u2014 the low end to plan on \u00b7 Ookla Open Data, ' + TERR_PERIOD + '</h4>';
+  var head = '<div class="ev-box"><h4>Measured at this place \u2014 a conservative low end to plan on \u00b7 Ookla Open Data, ' + TERR_PERIOD + '</h4>';
   if (lk.state === "loading") return head + '<p class="note">Loading the measurement database\u2026</p></div>';
   if (lk.state === "unavailable") return head + '<p class="note">The measurement pack could not be loaded in this copy of the page (it travels as a file beside the page), so the reference panel stands alone.</p></div>';
   if (lk.state === "none") return head + '<p class="note" style="color:var(--ink)"><strong>No service recorded.</strong> Ookla\u2019s database holds no ' + kind + ' measurements for this place in ' + TERR_PERIOD + ' \u2014 so on the evidence, there is no recorded service here. (A remote place can have service nobody has measured; nothing is in the database.)</p></div>';
@@ -841,8 +872,9 @@ function terrEvidenceBox(s){
     + '<div class="frow"><span>Uplink \u2014 expect at least</span><b>' + lk.u.toFixed(1) + ' Mbps</b></div>'
     + '<div class="frow"><span>Latency \u2014 up to</span><b>' + Math.round(lk.l) + ' ms</b></div>'
     + '<div class="frow"><span>Tests behind these figures</span><b>' + lk.t.toLocaleString("en-US") + '</b></div>'
-    + '<p class="note" style="color:var(--ink)">Real users\u2019 Speedtest results across ' + area + '. Ookla\u2019s tiles combine <strong>all operators</strong>, and a traveller cannot choose which carrier their SIM lands on \u2014 so the figures above are the <strong>lowest measured tile</strong> around this place (the highest, for latency): the throughput to plan on, not the average. Source: Ookla Open Data, ' + TERR_PERIOD + ', CC BY-NC-SA 4.0.</p>'
+    + '<p class="note" style="color:var(--ink)">Real users\u2019 Speedtest results across ' + area + '. Ookla\u2019s tiles combine <strong>all operators</strong>, and a traveller cannot choose which carrier their SIM lands on \u2014 so the figures above are the <strong>test-weighted 10th percentile</strong> across the tiles around this place (the 90th percentile, for latency): a low end set by where tests actually happened, so one sparsely tested tile cannot drag it down — the throughput to plan on, not the average. Source: Ookla Open Data, ' + TERR_PERIOD + ', CC BY-NC-SA 4.0.</p>'
     + (s.id === "wifi" ? '<p class="note" style="color:var(--ink)">The fixed layer measures fixed-broadband connections; indoors those are used over Wi-Fi, so this is the Wi-Fi-class experience at this place.</p>' : '')
+    + (s.id === "c5" ? '<p class="note" style="color:var(--ink)">Ookla\u2019s mobile layer mixes 4G and 5G tests, so read these figures as <strong>cellular as measured</strong> — not a 5G-only measurement.</p>' : '')
     + (lk.t < 30 ? '<p class="note" style="color:var(--ink)"><strong>Thin evidence:</strong> fewer than 30 tests \u2014 treat these figures as indicative, not settled.</p>' : '')
     + '</div>';
   return html;
@@ -851,8 +883,8 @@ function terrAvail(sysId){
   if (sysId === "c5" || sysId === "wifi"){
     if (!terrTouched){
       var lk = terrLookup(sysId);
-      if (lk.state === "record") return {ok:true, note:"Service exists here \u2014 Ookla recorded " + lk.t.toLocaleString("en-US") + (lk.t === 1 ? " test" : " tests") + " at this place (" + TERR_PERIOD + "); measured panel below"};
-      if (lk.state === "none") return {ok:false, note:"No service recorded \u2014 Ookla has no measurements for this place (" + TERR_PERIOD + ")"};
+      if (lk.state === "record") return {ok:true, measured:true, note:"Service exists here \u2014 Ookla recorded " + lk.t.toLocaleString("en-US") + (lk.t === 1 ? " test" : " tests") + " at this place (" + TERR_PERIOD + "); measured panel below"};
+      if (lk.state === "none") return {ok:false, measured:true, note:"No service recorded \u2014 Ookla has no measurements for this place (" + TERR_PERIOD + ")"};
     }
     var t = $("terrSelect").value;
     if (t === "notavailable") return {ok:false, note:"Not available here \u2014 your declaration (control 3 override)"};
@@ -915,7 +947,7 @@ function effectiveRef(s){
         else if (s.id === "oneweb" && term === "dedicated"){ out.tp = "≈" + Math.round(50*fd.retention) + "–" + Math.round(195*fd.retention) + " Mbps in this rain (" + pct + "% of clear-sky 50–195 — computed fade, arithmetic on this card)"; }
         else if (s.id === "o3b"){ out.tp = "≈" + pct + "% of the clear-sky trunk rate in this rain (computed Ka fade — arithmetic on this card); adaptive coding & modulation sheds rate to hold the trunk"; }
         else if (s.kind === "geo" && term === "dedicated"){ out.tp = "≈" + Math.round(25*fd.retention) + "–" + Math.round(100*fd.retention) + " Mbps in this rain (" + pct + "% of clear-sky 25–100 — computed fade, arithmetic on this card)"; }
-        out.notes.push("Computed rain fade at " + fd.fLabel + ": " + fmtFade(fd.A) + " (γ = k·R^α, R = " + fd.R + " mm/h, slant path at the " + fd.el + "° minimum elevation) against a stated " + fd.snr0 + " dB clear-sky operating point → faded SNR " + fd.fadedSnr.toFixed(1) + " dB → throughput ≈ " + pct + "% of clear-sky by the Shannon capacity ratio. Every input and the full arithmetic are in the fade panel on this card." + (fd.A < 0.1 ? " At this frequency the P.838 coefficients themselves make the fade negligible — no special case was applied, and the clear-sky figures stand." : ""));
+        out.notes.push("Computed rain fade at " + fd.fLabel + ": " + fmtFade(fd.A) + " (γ = k·R^α, R = " + fd.R + " mm/h, slant path at the " + fd.el + "°" + (fd.geoElUsed ? " (this fleet's fixed elevation at this place)" : " minimum elevation") + ") against a stated " + fd.snr0 + " dB clear-sky operating point → faded SNR " + fd.fadedSnr.toFixed(1) + " dB → throughput ≈ " + pct + "% of clear-sky by the Shannon capacity ratio. Every input and the full arithmetic are in the fade panel on this card." + (fd.A < 0.1 ? " At this frequency the P.838 coefficients themselves make the fade negligible — no special case was applied, and the clear-sky figures stand." : ""));
         if (fd.retention < 0.2) out.notes.push("Margin essentially exhausted at this rain rate and elevation: expect the lowest-rate adaptive-coding mode or brief outage in the heaviest cells — a fixed dish cannot dodge weather, and a LEO/MEO pass improves as the satellite climbs above the minimum elevation.");
       }
     }
@@ -932,7 +964,10 @@ function effectiveRef(s){
 /* ---------- computed rain fade — simplified ITU-R P.618 / P.838 / P.839 ----------
    γ = k·R^α (P.838-3, polarisation-averaged, log-interpolated in frequency);
    slant path Ls = hR / sin(el) with hR from a simplified P.839 latitude profile,
-   evaluated at the selected minimum elevation (stated worst-case pass geometry);
+   evaluated at the selected minimum elevation for LEO/MEO (stated worst-case
+   pass geometry) and at the fleet's own fixed elevation for GEO; a sky-noise
+   rise term (rain at 275 K against a stated 290 K system temperature) is
+   added to the path loss before the margin arithmetic;
    P.618 horizontal-reduction factor r (clamped to [0.3, 1]); fade A = γ·Ls·r.
    Basis: R is the point rain rate exceeded ≈0.1% of the time in the chosen regime.
    The fade then eats a stated clear-sky operating point (SNR0) dB-for-dB and
@@ -964,6 +999,12 @@ function fadeFreqFor(s){
   if (s.kind === "geo") return term === "handheld" ? { f:1.6, label:"1.6 GHz (L-band handheld)" } : { f:12, label:"12 GHz (Ku-band downlink)" };
   return null;
 }
+/* Each system's native carrier, where it differs from the 2 / 12 GHz references. */
+function nativeFreqFor(s){
+  if (s.id === "iridium") return { f:1.62, label:"1.6 GHz (L-band)" };
+  if (s.id === "o3b") return { f:20, label:"20 GHz (Ka-band)" };
+  return null;
+}
 /* Stated clear-sky operating point at the reference rate (dB) — the margin the fade eats. */
 function snr0For(s){
   var term = state.terminals[s.id];
@@ -982,18 +1023,26 @@ function computeRainFade(s){
   var co = p838Coeff(ff.f);
   var gamma = co.k * Math.pow(R, co.a);
   var hR = rainHeightKm(c.lat);
-  var el = parseFloat($("minEl") ? $("minEl").value : 25);
+  var minElVal = parseFloat($("minEl") ? $("minEl").value : 25);
+  var el = minElVal, geoElUsed = false;
+  if (s.kind === "geo"){ var gi = geoInfo(s); if (gi && isFinite(gi.el) && gi.el > minElVal){ el = gi.el; geoElUsed = true; } }
   var elRad = el * D2R;
   var Ls = hR / Math.sin(elRad);
   var Lg = Ls * Math.cos(elRad);
   var rDen = 1 + 0.78*Math.sqrt(Math.max(0, Lg*gamma/ff.f)) - 0.38*(1 - Math.exp(-2*Lg));
   var r = 1 / rDen; if (r > 1) r = 1; if (r < 0.3) r = 0.3;
   var A = gamma * Ls * r;
+  /* Sky-noise rise: rain at ~275 K radiates into the antenna, so C/N degrades
+     by more than the path loss alone — against a stated 290 K clear-sky system
+     temperature (simplified P.618 treatment, printed separately, not folded
+     into A). */
+  var tSky = 275 * (1 - Math.pow(10, -A/10));
+  var noiseDb = 10 * Math.log10(1 + tSky / 290);
   var snr0 = snr0For(s);
-  var faded = snr0 - A;
+  var faded = snr0 - A - noiseDb;
   var ret = Math.log2(1 + Math.pow(10, faded/10)) / Math.log2(1 + Math.pow(10, snr0/10));
   if (ret > 1) ret = 1; if (ret < 0) ret = 0;
-  return { f:ff.f, fLabel:ff.label, k:co.k, alpha:co.a, gamma:gamma, R:R, auto:(!state.rainRate || state.rainRate === "auto"), regime:rainRegimeLabel(R), hR:hR, el:el, Ls:Ls, Lg:Lg, r:r, A:A, snr0:snr0, fadedSnr:faded, retention:ret };
+  return { f:ff.f, fLabel:ff.label, k:co.k, alpha:co.a, gamma:gamma, R:R, auto:(!state.rainRate || state.rainRate === "auto"), regime:rainRegimeLabel(R), hR:hR, el:el, Ls:Ls, Lg:Lg, r:r, A:A, noiseDb:noiseDb, tSky:tSky, geoElUsed:geoElUsed, snr0:snr0, fadedSnr:faded, retention:ret };
 }
 function fmtFade(A){ return A < 0.1 ? A.toFixed(2) + " dB" : A.toFixed(1) + " dB"; }
 function rainFadeBox(s){
@@ -1002,17 +1051,20 @@ function rainFadeBox(s){
   if (effectiveRef(s).notOffered) return "";
   var fd = computeRainFade(s); if (!fd) return "";
   var pct = Math.round(fd.retention*100);
-  var html = '<div class="fade-box"><h4>Computed rain fade — simplified ITU-R P.618 / P.838 · R exceeded ≈0.1% of the time · worst case at the ' + fd.el + '° minimum elevation</h4>'
+  var html = '<div class="fade-box"><h4>Computed rain fade — simplified ITU-R P.618 / P.838 · R exceeded ≈0.1% of the time · ' + (fd.geoElUsed ? 'at this fleet\'s fixed elevation here, ' + fd.el.toFixed(1) + '°' : 'worst case at the ' + fd.el + '° minimum elevation') + '</h4>'
     + '<div class="frow"><span>Frequency (representative downlink)</span><b>' + fd.fLabel + '</b></div>'
     + '<div class="frow"><span>Rain rate R' + (fd.auto ? ' (auto from this place)' : ' (your selection)') + '</span><b>' + fd.R + ' mm/h — ' + fd.regime + '</b></div>'
     + '<div class="frow"><span>Specific attenuation γ = k·R^α (P.838: k=' + fd.k.toExponential(2) + ', α=' + fd.alpha.toFixed(2) + ')</span><b>' + (fd.gamma < 0.01 ? fd.gamma.toFixed(4) : fd.gamma.toFixed(2)) + ' dB/km</b></div>'
     + '<div class="frow"><span>Rain height hR (simplified P.839, lat ' + currentCoords().lat.toFixed(1) + '°)</span><b>' + fd.hR.toFixed(1) + ' km</b></div>'
     + '<div class="frow"><span>Slant path Ls = hR / sin(' + fd.el + '°) · reduction r</span><b>' + fd.Ls.toFixed(1) + ' km · r=' + fd.r.toFixed(2) + '</b></div>'
     + '<div class="frow"><span><strong>Rain fade A = γ · Ls · r</strong></span><b>' + fmtFade(fd.A) + '</b></div>'
-    + '<p class="note" style="color:var(--ink)"><strong>Margin arithmetic:</strong> stated clear-sky operating point ' + fd.snr0 + ' dB − fade ' + fmtFade(fd.A) + ' = faded SNR ' + fd.fadedSnr.toFixed(1) + ' dB. Throughput retention = log₂(1+10<sup>' + (fd.fadedSnr/10).toFixed(2) + '</sup>) ÷ log₂(1+10<sup>' + (fd.snr0/10).toFixed(1) + '</sup>) = <strong>' + pct + '% of clear-sky</strong> — the reference panel below is scaled by exactly this factor. Geometry uses the minimum elevation, so a real pass (mostly higher, shorter path) fades less; gateway / site diversity and adaptive coding are how operators defend the rest.</p>'
+    + '<div class="frow"><span>Sky-noise rise — rain at 275 K vs a stated 290 K system temperature</span><b>+' + fd.noiseDb.toFixed(1) + ' dB</b></div>'
+    + '<div class="frow"><span><strong>Total degradation (fade + sky noise)</strong></span><b>' + (fd.A + fd.noiseDb).toFixed(1) + ' dB</b></div>'
+    + '<p class="note" style="color:var(--ink)"><strong>Margin arithmetic:</strong> stated clear-sky operating point ' + fd.snr0 + ' dB − fade ' + fmtFade(fd.A) + ' − sky-noise ' + fd.noiseDb.toFixed(1) + ' dB = faded SNR ' + fd.fadedSnr.toFixed(1) + ' dB. Throughput retention = log₂(1+10<sup>' + (fd.fadedSnr/10).toFixed(2) + '</sup>) ÷ log₂(1+10<sup>' + (fd.snr0/10).toFixed(1) + '</sup>) = <strong>' + pct + '% of clear-sky</strong> — the reference panel below is scaled by exactly this factor. ' + (fd.geoElUsed ? 'Geometry uses this fleet\'s fixed elevation at your place — a GEO satellite does not move, so no higher pass is coming' : 'Geometry uses the minimum elevation, so a real pass (mostly higher, shorter path) fades less') + '; gateway / site diversity and adaptive coding are how operators defend the rest.</p>'
     + (fd.A < 0.1 ? '<p class="note" style="color:var(--ink)"><strong>Negligible — and computed, not assumed:</strong> at ' + fd.fLabel + ' the P.838 coefficients themselves give γ ≈ ' + fd.gamma.toFixed(4) + ' dB/km, so the fade rounds to nothing. That is the physical reason this band is the all-weather / safety band.</p>' : '')
     + (fd.retention < 0.2 ? '<p class="note" style="color:var(--ink)"><strong>Margin essentially exhausted</strong> at this rain rate and elevation: expect adaptive coding to fall to its lowest-rate mode, or brief outage in the heaviest cells. Raising the minimum elevation (shorter slant path through the rain) or dropping to a lower band is the physical remedy — try the elevation slider and watch the fade fall.</p>' : '')
-    + '</div>';
+        + '<p class="note">Not yet in this arithmetic: gaseous absorption (ITU-R P.676) and cloud attenuation (P.840) — together roughly 0.5–1.5 dB more at Ka-band in humid air, far less at Ku, negligible at L/S-band.</p>'
++ '</div>';
   return html;
 }
 function conditionsBanner(s){
@@ -1039,9 +1091,14 @@ function avColor(av){ return !av ? "var(--muted)" : av.ok === true ? "var(--gree
 function refBox(s){
   var av = (s.kind === "ref") ? terrAvail(s.id) : null;
   if (s.kind === "ref" && av && av.ok === false){
+    if (av.measured){
+      return '<div class="refbox"><div class="label" style="margin-bottom:6px">Terrestrial availability — measured evidence</div>'
+        + '<p class="note" style="font-weight:800;color:var(--red);font-size:14.5px">No service recorded at ' + placeName() + '.</p>'
+        + '<p class="note">Ookla\u2019s database (' + TERR_PERIOD + ') holds no measurements for this place, so no throughput / latency / cost panel is shown for this system here. That is a statement about the database, not proof that no signal exists — if you know this place has service, set the selector in control 3 to Available: your declaration overrides the measurement.</p></div>';
+    }
     return '<div class="refbox"><div class="label" style="margin-bottom:6px">Terrestrial availability — your declaration</div>'
       + '<p class="note" style="font-weight:800;color:var(--red);font-size:14.5px">Unavailable at ' + placeName() + '.</p>'
-      + '<p class="note">You set <strong>Terrestrial (cellular / Wi-Fi) at this location = Not available</strong>, so no throughput / latency / cost panel is shown for this system here. This is <strong>not from a database</strong> — no coverage database was consulted; change the selector in control 3 if this place does have terrestrial service.</p></div>';
+      + '<p class="note">You set <strong>Terrestrial (cellular / Wi-Fi) at this location = Not available</strong>, so no throughput / latency / cost panel is shown for this system here. This is your declaration in control 3, and it overrides the measured evidence; change the selector if this place does have terrestrial service.</p></div>';
   }
   var er = effectiveRef(s);
   var termLabel = termLabelFor(s, state.terminals[s.id]);
@@ -1058,7 +1115,7 @@ function refBox(s){
     + '<div class="stat"><span>Cost</span><b style="font-size:14px">' + er.cost + '</b></div>'
     + '<div class="stat"><span>Best role</span><b style="font-size:14px">' + er.role + '</b></div>';
   er.notes.forEach(function(n){ html += '<p class="note" style="color:var(--ink)">' + n + '</p>'; });
-  if (av && av.ok === "unknown") html += '<p class="note" style="font-weight:800;color:var(--amber)">⚠ Availability unverified — no database consulted. You set Terrestrial at this location = Unknown, so these reference figures are shown for a place that <em>may or may not</em> have this service.</p>';
+  if (av && av.ok === "unknown") html += '<p class="note" style="font-weight:800;color:var(--amber)">⚠ Availability unverified. You set Terrestrial at this location = Unknown, so these reference figures are shown for a place that <em>may or may not</em> have this service.</p>';
   else if (av) html += '<p class="note" style="font-weight:800;color:' + avColor(av) + '">' + av.note + ' at ' + placeName() + '</p>';
   html += '</div>';
   return html;
@@ -1109,9 +1166,9 @@ function renderCards(){
     var r = state.results[s.id];
     var live = "";
     var termKey = state.terminals[s.id];
-    var terminalHtml = '<div class="terminal"><b>Terminal — your choice under Assumptions' + (termKey === DEFAULT_TERMINALS[s.id] ? ' (this system\'s default)' : '') + '</b>' + TERMINAL_LABELS[termKey] + '. <span style="color:var(--muted)">' + (s.terminal || "") + '</span></div>'
+    var terminalHtml = '<div class="terminal"><b>Terminal — your choice under Assumptions' + (termKey === DEFAULT_TERMINALS[s.id] ? ' (this system\'s default)' : '') + '</b>' + termLabelFor(s, termKey) + '. <span style="color:var(--muted)">' + (s.terminal || "") + '</span></div>'
       + (s.band ? '<div class="terminal"><b>Band</b>' + (s.id === "starlink" && termKey === "phone" ? "S-band (direct-to-cell on a standard phone)" : s.band) + '</div>' : '')
-      + ((s.kind === "tle" || s.kind === "geo") ? '<div class="terminal"><b>Gateway / interconnection — your choice in control 7' + (state.gwMode[s.id] === DEFAULT_GW_MODE[s.id] ? ' (this system\'s default)' : '') + '</b>' + (state.gwMode[s.id] === "isl" ? 'Inter-satellite links (ISL) — traffic routes across satellites to a distant gateway; service coverage = geometric coverage.' : 'Bent-pipe via gateway — ' + gwSelLabel(s.id) + '. A pass counts as service only while the same satellite also sees that gateway.') + '</div>' : '')
+      + ((s.kind === "tle" || s.kind === "geo") ? '<div class="terminal"><b>Gateway / interconnection — your choice in control 7' + (state.gwMode[s.id] === DEFAULT_GW_MODE[s.id] ? ' (this system\'s default)' : '') + '</b>' + (state.gwMode[s.id] === "isl" ? 'Inter-satellite links (ISL) — traffic routes across satellites to a distant gateway; service coverage = geometric coverage.' : 'Bent-pipe via gateway — ' + gwSelLabel(s.id) + '. A pass counts as service only while the same satellite also sees that gateway.' + (r && r.gwUsed ? ' On the best service pass, the delay figures on this card ran via <strong>' + r.gwUsed + '</strong>.' : '')) + '</div>' : '')
       + ((state.residency && (s.kind === "tle" || s.kind === "geo")) ? '<div class="terminal"><b>Data-residency rule — ON (control 7)</b>Traffic for ' + placeName() + ' must enter and leave the internet only through a gateway in ' + (userCountryName() || 'the user\u2019s country (not identified for this location)') + '. ' + (inCountryGateways(s.id).length ? 'An in-country gateway is listed for this system: ' + inCountryGateways(s.id).map(function(g){ return g.name; }).join('; ') + '.' : '<strong>No in-country gateway is listed for this system — its service reads \u201cnot established\u201d.</strong>') + (s.kind === "geo" ? ' For GEO the rule applies to the gateway / teleport, not the satellite slot; INSAT / GSAT is the in-country fleet for India.' : (state.gwMode[s.id] === "isl" ? ' ISL routing does not remove the rule — the traffic must still be landed at that in-country gateway.' : '')) + '</div>' : '')
       + conditionsBanner(s) + rainFadeBox(s) + terrEvidenceBox(s);
     if (s.kind === "ref"){
@@ -1157,6 +1214,11 @@ function renderCards(){
         gwNote += '<p class="note" style="color:var(--ink)"><strong>Data-residency rule ON:</strong> ' + (r.gwMode === "isl" ? 'inter-satellite routing does not remove the rule — traffic must still be landed at a gateway in ' + (r.residencyCountry || "the user\u2019s country") + '. An in-country gateway is listed for this system (' + inCountryGateways(s.id).map(function(g){ return g.name; }).join("; ") + '), so service is shown as established, landed there.' : 'service coverage above was computed <strong>only against gateway(s) in ' + (r.residencyCountry || "the user\u2019s country") + '</strong> (' + r.gwName + '); out-of-country gateways were excluded as not permitted for this location.') + '</p>';
         if (s.kind === "geo") gwNote += '<p class="note">For GEO, the residency rule applies to the <strong>gateway / teleport</strong>, not the satellite slot — the fleet\u2019s longitude does not decide compliance. <strong>INSAT / GSAT is the in-country fleet for India</strong>, landed through an Indian teleport.</p>';
       }
+      var noSvc = r.serviceBlocked || (r.serviceCov !== undefined && r.serviceCov !== null && r.serviceCov <= 0);
+      if (r.gwMode === "bent" && !r.serviceBlocked && r.serviceCov !== undefined && r.serviceCov !== null && r.serviceCov <= 0){
+        var ngw = nearestListedGateway(s);
+        if (ngw && ngw.dist > 2000) gwNote += '<p class="note" style="color:var(--ink)"><strong>Read this 0% carefully:</strong> the nearest listed gateway for this system is ' + ngw.name + ', about ' + fmt(Math.round(ngw.dist/100)*100) + ' km from here. With no listed gateway in range of these passes, bent-pipe service reads 0% — that is a limit of this page\'s gateway list, not a verdict that the system has no coverage here.</p>';
+      }
       var isGeoCard = (s.kind==="geo");
       live = '<div class="big mono">' + (isGeoCard ? (r.cov>0 ? 'In view <small>continuously — 100% of the day</small>' : 'Not served <small>below horizon / too low</small>') : r.cov.toFixed(1) + '% <small>coverage of the day</small>') + '</div>'
         + '<div class="stats">'
@@ -1166,8 +1228,10 @@ function renderCards(){
         + '<div class="stat"><span>Satellites used</span><b class="mono">' + fmt(r.nsats) + '</b></div>')
         + geoStats + svcHtml
         + '<div class="stat"><span>' + (isGeoCard ? (r.gwMode === "bent" ? '1-way delay user→gateway via this slot' : '1-way delay to this slot') : (r.gwMode === "bent" ? '1-way delay user→gateway (best service pass)' : '1-way delay (best pass)')) + '</span><b class="mono">' + (r.serviceBlocked ? '— (not established — no in-country gateway)' : (r.gwMode === "bent" && r.serviceCov !== undefined && r.serviceCov !== null && r.serviceCov <= 0) ? '— (no service pass via this gateway)' : r.delayMin.toFixed(2) + '–' + r.delayMax.toFixed(2) + ' ms') + '</b></div>'
-        + (isGeoCard ? '<div class="stat"><span>Slant range to slot</span><b class="mono">' + fmt(Math.round(r.geoRange||0)) + ' km</b></div>' : '<div class="stat"><span>Max Doppler @2 GHz</span><b class="mono">' + r.dopp2.toFixed(1) + ' kHz</b></div>'
-        + '<div class="stat"><span>Max Doppler @12 GHz</span><b class="mono">' + r.dopp12.toFixed(1) + ' kHz</b></div>')
+        + (isGeoCard ? '<div class="stat"><span>Slant range to slot</span><b class="mono">' + fmt(Math.round(r.geoRange||0)) + ' km</b></div>' : '<div class="stat"><span>Max Doppler @2 GHz</span><b class="mono">' + (noSvc ? '—' : r.dopp2.toFixed(1) + ' kHz') + '</b></div>'
+        + '<div class="stat"><span>Max Doppler @12 GHz</span><b class="mono">' + (noSvc ? '—' : r.dopp12.toFixed(1) + ' kHz') + '</b></div>'
+        + (nativeFreqFor(s) ? '<div class="stat"><span>Max Doppler @ native ' + nativeFreqFor(s).label + '</span><b class="mono">' + (noSvc ? '—' : (r.dopp2 * nativeFreqFor(s).f / 2).toFixed(1) + ' kHz') + '</b></div>' : '')
+        + '<div class="stat"><span>Max Doppler rate @2 GHz</span><b class="mono">' + (noSvc || !r.doppRate2 ? '—' : fmt(Math.round(r.doppRate2)) + ' Hz/s') + '</b></div>')
         + '<div class="stat"><span>Min elevation used</span><b class="mono">' + r.minEl + '°</b></div>'
         + '</div>' + gwNote + geoExtra + fallbackBox(s, r) + mobilityResultNote() + anchorCheck(s, r);
     } else {
@@ -1370,31 +1434,33 @@ function computeConstellation(sys, sats, dayStart, minEl, lat, lon, onProgress, 
           serviceCov = svcCovered/86400000*100;
         }
         /* sample pass: highest maxEl (in bent-pipe mode: highest pass that also serves via a gateway) */
-        var sample = null, sampleStats = { delayMin:0, delayMax:0, dopp2:0, dopp12:0 };
+        var sample = null, sampleStats = { delayMin:0, delayMax:0, dopp2:0, dopp12:0, doppRate2:0, gwUsed:"" };
         var samplePool = (gwMode === "bent" && gwList.length && !serviceBlocked) ? svcPasses : dayPasses;
         samplePool.forEach(function(iv){ if (!sample || iv.maxEl > sample.maxEl) sample = iv; });
         if (sample){
           var s0 = Math.max(sample.s, dayStart), s1 = Math.min(sample.e, dayEnd);
           var step = isMeo ? 20000 : 5000;
-          var dMin = 1e9, dMax = 0, mxRate = 0;
+          var dMin = 1e9, dMax = 0, mxRate = 0, mxRateRate = 0, prevSrate = null, prevSrateT = 0, gwUsedName = "";
           for (var st2 = s0; st2 <= s1; st2 += step){
             var rr = sgpElRange(sample.satrec, st2, obsGd); if (!rr) continue;
             var leg = rr.range;
             if (gwMode === "bent" && gwList.length){
-              var bestGw = null;
-              for (var gj = 0; gj < gwObsGd.length; gj++){ var gr = sgpElRange(sample.satrec, st2, gwObsGd[gj]); if (gr && gr.el >= minEl && (bestGw === null || gr.range < bestGw)) bestGw = gr.range; }
+              var bestGw = null, bestGwIdx = -1;
+              for (var gj = 0; gj < gwObsGd.length; gj++){ var gr = sgpElRange(sample.satrec, st2, gwObsGd[gj]); if (gr && gr.el >= minEl && (bestGw === null || gr.range < bestGw)){ bestGw = gr.range; bestGwIdx = gj; } }
               if (bestGw === null) continue; /* gateway not visible at this instant of the pass */
               leg = rr.range + bestGw;       /* user -> satellite -> gateway */
             }
-            var d = leg / C_KMS * 1000; if (d < dMin) dMin = d; if (d > dMax) dMax = d;
+            var d = leg / C_KMS * 1000; if (d < dMin){ dMin = d; if (gwMode === "bent" && gwList.length && typeof bestGwIdx !== "undefined" && bestGwIdx >= 0) gwUsedName = gwList[bestGwIdx].name; } if (d > dMax) dMax = d;
             var ra = sgpElRange(sample.satrec, st2-3000, obsGd), rb = sgpElRange(sample.satrec, st2+3000, obsGd);
-            if (ra && rb){ var rate = Math.abs(rb.range - ra.range)/6; if (rate > mxRate) mxRate = rate; }
+            if (ra && rb){ var srate = (rb.range - ra.range)/6; var rate = Math.abs(srate); if (rate > mxRate) mxRate = rate;
+              if (prevSrate !== null){ var dtR = (st2 - prevSrateT)/1000; if (dtR > 0){ var rrate = Math.abs(srate - prevSrate)/dtR; if (rrate > mxRateRate) mxRateRate = rrate; } }
+              prevSrate = srate; prevSrateT = st2; }
           }
-          sampleStats = { delayMin:dMin===1e9?0:dMin, delayMax:dMax, dopp2: mxRate/C_KMS*2e6, dopp12: mxRate/C_KMS*12e6 };
+          sampleStats = { delayMin:dMin===1e9?0:dMin, delayMax:dMax, dopp2: mxRate/C_KMS*2e6, dopp12: mxRate/C_KMS*12e6, doppRate2: mxRateRate/C_KMS*2e9, gwUsed: gwUsedName };
         }
         resolve({ passes: dayPasses.length, median: median, max: max, cov: cov, gap: gap/60000, nsats: sats.length, minEl: minEl,
                   serviceCov: serviceCov, serviceBlocked: serviceBlocked, residency: !!(gw && gw.residency), residencyCountry: gw ? gw.residencyCountry : null, gwMode: gwMode, gwName: gw ? gw.label : "",
-                  delayMin: sampleStats.delayMin, delayMax: sampleStats.delayMax, dopp2: sampleStats.dopp2, dopp12: sampleStats.dopp12 });
+                  delayMin: sampleStats.delayMin, delayMax: sampleStats.delayMax, dopp2: sampleStats.dopp2, dopp12: sampleStats.dopp12, doppRate2: sampleStats.doppRate2, gwUsed: sampleStats.gwUsed });
       }
     }
     processBatch();
@@ -1408,20 +1474,20 @@ function computeGEO(minEl, lat, lon, gw, sys){
   var delay = range / C_KMS * 1000;
   var gwMode = gw ? gw.mode : "bent", gwName = gw ? gw.label : "";
   var base = { geoEl: el, geoAz: lk.az, geoRange: range, slotLon: slot, slotLabel: s.slotLabel || (slot.toFixed(1)+"°") };
-  if (el < minEl) return Object.assign({ passes: 0, median: 0, max: 0, cov: 0, gap: 1440, nsats: 1, minEl: minEl, delayMin: delay, delayMax: delay, dopp2: 0, dopp12: 0, geoBelow: el, serviceCov: 0, serviceBlocked: !!(gw && gw.blocked), residency: !!(gw && gw.residency), residencyCountry: gw ? gw.residencyCountry : null, gwMode: gwMode, gwName: gwName }, base);
+  if (el < minEl) return Object.assign({ passes: 0, median: 0, max: 0, cov: 0, gap: 1440, nsats: 1, minEl: minEl, delayMin: delay, delayMax: delay, dopp2: 0, dopp12: 0, geoBelow: el, serviceCov: 0, serviceBlocked: !!(gw && gw.blocked), residency: !!(gw && gw.residency), residencyCountry: gw ? gw.residencyCountry : null, gwMode: gwMode, gwName: gwName, gwUsed: "" }, base);
   var serviceBlocked = !!(gw && gw.blocked);
   var serviceCov = 100, outDelay = delay;
   if (serviceBlocked){ serviceCov = null; }
   else if (gwMode === "bent" && gw && gw.list && gw.list.length){
-    var best = null;
+    var best = null, bestName = "";
     gw.list.forEach(function(g){
       var glk = geoLook(g.lat, g.lon, slot);
-      if (glk.el >= minEl && (best === null || glk.range < best)) best = glk.range;
+      if (glk.el >= minEl && (best === null || glk.range < best)){ best = glk.range; bestName = g.name; }
     });
     if (best === null){ serviceCov = 0; }
     else outDelay = (range + best) / C_KMS * 1000;
   }
-  return Object.assign({ passes: 1, median: 1440, max: 1440, cov: 100, gap: 0, nsats: 1, minEl: minEl, delayMin: outDelay, delayMax: outDelay, dopp2: 0, dopp12: 0, serviceCov: serviceCov, serviceBlocked: serviceBlocked, residency: !!(gw && gw.residency), residencyCountry: gw ? gw.residencyCountry : null, gwMode: gwMode, gwName: gwName }, base);
+  return Object.assign({ passes: 1, median: 1440, max: 1440, cov: 100, gap: 0, nsats: 1, minEl: minEl, delayMin: outDelay, delayMax: outDelay, dopp2: 0, dopp12: 0, serviceCov: serviceCov, serviceBlocked: serviceBlocked, residency: !!(gw && gw.residency), residencyCountry: gw ? gw.residencyCountry : null, gwMode: gwMode, gwName: gwName, gwUsed: bestName }, base);
 }
 function setProgress(pct, text){
   $("progressWrap").style.display = "block"; $("progressText").style.display = "block";
