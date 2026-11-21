@@ -149,7 +149,7 @@ footer li{margin-bottom:5px}
     <div class="film-toggle" aria-hidden="true"><svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.5v13l11-6.5z"/></svg><svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></div>
       <div class="film-seek"><input type="range" id="filmSeek" min="0" max="1000" step="1" value="0" aria-label="Move back or forward in the film"></div>
     </div>
-    <figcaption>Tap the film to play — drag the bar to move back or forward. The story in 100 seconds, terrestrial first, then satellite.</figcaption>
+    <figcaption>Press play — drag the bar to move back or forward. The story in 100 seconds, terrestrial first, then satellite.</figcaption>
   </figure>
 
   <section class="controls" aria-label="Explorer controls">
@@ -1502,7 +1502,9 @@ function computeAll(){
 // flashes the play/pause icon and the seek bar. While the film plays they
 // fade away after two seconds; while it is paused they stay, so the bar
 // can be dragged to move back or forward. Tapping the film toggles
-// play/pause; dragging the bar seeks, and never toggles.
+// play/pause; dragging the bar seeks, and never toggles. The controls
+// are visible whenever the film sits paused, including at the start —
+// the play button is simply there, no tap needed to reveal it.
 (function(){
   var stage=document.getElementById('filmStage'); if(!stage) return;
   var video=stage.querySelector('video'); if(!video) return;
@@ -1560,7 +1562,7 @@ function computeAll(){
       if(!scrubbing && video.duration){ seek.value=Math.round((video.currentTime/video.duration)*1000); }
     });
   }
-  sync();
+  show();
 })();
 </script>
 </body>
